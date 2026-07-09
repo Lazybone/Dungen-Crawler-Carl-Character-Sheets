@@ -113,9 +113,16 @@ Einzelne Nachträge — etwa Begriffe, die erst zur Laufzeit auftauchen — geh�
 Die Chunk-Dateien unter `tools/i18n-chunks/` sind Zwischenprodukte und nicht
 versioniert. Gepflegte Quelle der Wahrheit ist `data/i18n.de.json`.
 
-Die **Buchtitel** sind sinngemäß übersetzt. Die deutschen Ausgaben behalten die
-englischen Originaltitel und ergänzen lediglich deutsche Untertitel — es gibt also
-keine offiziellen deutschen Titel, an denen man sich ausrichten könnte.
+Die **Buchtitel** bleiben englisch. Die deutschen Ausgaben behalten die englischen
+Originaltitel und ergänzen lediglich deutsche Untertitel — es gibt also keine
+offiziellen deutschen Titel, an denen man sich ausrichten könnte. Sie stehen darum
+in `tools/i18n-extra.de.json` mit sich selbst als Übersetzung; das überschreibt beim
+`merge` jede Chunk-Übersetzung und hält sie dauerhaft englisch.
+
+Gegenstände und Orte, die nach einem Buch benannt sind, bleiben davon unberührt und
+werden weiterhin übersetzt: das Artefaktset `Gate of the Feral Gods` (ohne `The`), das
+`Eye of the Bedlam Bride Tattoo` und die Maskerade als Veranstaltung sind keine
+Buchtitel, auch wenn sie beinahe so heißen.
 
 ## Dateien
 
