@@ -14,9 +14,39 @@
   var DICT = null;
   var lang = "en";
 
-  function dict() {
-    if (!DICT) DICT = JSON.parse(document.getElementById("i18n-de").textContent);
-    return DICT;
+  // Das Wörterbuch kommt aus einer von zwei Quellen. In der eigenständigen
+  // index.html steckt es als <script type="application/json"> in der Seite und
+  // steht sofort bereit. Getrennt ausgeliefert fehlt dieses Element und die
+  // Datei wird geholt — dann aber erst, wenn Deutsch wirklich gebraucht wird:
+  // wer auf Englisch bleibt, lädt die knappe Megabyte nie.
+  var DICT_URL = "data/i18n.de.json";
+
+  function dictFromPage() {
+    if (DICT) return true;
+    var el = document.getElementById("i18n-de");
+    if (!el) return false;
+    DICT = JSON.parse(el.textContent);
+    return true;
+  }
+
+  function fetchDict() {
+    return fetch(DICT_URL)
+      .then(function (r) {
+        if (!r.ok) throw new Error("i18n.de.json: HTTP " + r.status);
+        return r.json();
+      })
+      .then(function (d) {
+        DICT = d;
+      });
+  }
+
+  // Gezeichnet wird erst, wenn das Wörterbuch steht — sonst liefe ein Durchgang
+  // durch die Fabrik ohne Übersetzung und die Seite zeigte kurz Englisch.
+  // Scheitert das Laden, bleibt DICT leer und der Text englisch: dieselbe Regel
+  // wie bei einer fehlenden Vokabel, nur für alle auf einmal.
+  function withDict(next, then) {
+    if (next !== "de" || dictFromPage()) return then();
+    fetchDict().catch(function () {}).then(then);
   }
 
   // Zusammengesetzte Texte erreichen das Wörterbuch nie als Ganzes: das Bundle
@@ -50,8 +80,8 @@
   var misses = Object.create(null);
 
   function t(s) {
-    if (lang !== "de" || typeof s !== "string" || !s) return s;
-    var hit = dict()[s];
+    if (lang !== "de" || !DICT || typeof s !== "string" || !s) return s;
+    var hit = DICT[s];
     if (typeof hit === "string") return hit;
     for (var i = 0; i < RULES.length; i++) {
       var m = s.match(RULES[i][0]);
@@ -140,10 +170,12 @@
 
   function setLang(next) {
     if (next === lang) return;
-    lang = next;
-    try { localStorage.setItem("dcc_lang", lang); } catch (e) { /* Privater Modus */ }
-    paintButton();
-    if (root) draw();
+    withDict(next, function () {
+      lang = next;
+      try { localStorage.setItem("dcc_lang", lang); } catch (e) { /* Privater Modus */ }
+      paintButton();
+      if (root) draw();
+    });
   }
 
   // Der Umschalter hängt an <body>, nicht im von React verwalteten #root, damit
@@ -162,7 +194,9 @@
   function mount(reactRoot, renderTree) {
     root = reactRoot;
     tree = renderTree;
-    draw();
+    // Steckt das Wörterbuch in der Seite, bleibt dieser Weg synchron und der
+    // erste Render passiert wie zuvor noch in diesem Aufruf.
+    withDict(lang, draw);
     addButton();
   }
 

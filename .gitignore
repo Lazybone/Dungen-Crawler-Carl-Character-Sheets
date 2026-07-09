@@ -3,6 +3,10 @@
 tools/i18n.source.json
 tools/i18n-chunks/
 
+# Die Auslieferung für einen Webserver. index.html dagegen ist versioniert:
+# sie ist das Produkt, nicht nur ein Zwischenschritt.
+dist/
+
 # macOS
 .DS_Store
 

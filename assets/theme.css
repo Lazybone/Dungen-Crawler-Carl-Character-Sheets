@@ -3,8 +3,8 @@
    Farben und Schriften von mattdinniman.com. Die Seite ist die gedruckte
    Pressemappe zur Sendung; die schwarze Leiste unten ist das System.
 
-   Ersetzt assets/index-Cq2xGauF.css vollständig. Die --r-*-Variablennamen
-   sind fix: das JS setzt inline `--qcolor: var(--r-<tier>)`.
+   Ersetzt das ursprüngliche Stylesheet des Vite-Builds vollständig. Die
+   --r-*-Variablennamen sind fix: das JS setzt inline `--qcolor: var(--r-<tier>)`.
    ========================================================================= */
 
 :root {

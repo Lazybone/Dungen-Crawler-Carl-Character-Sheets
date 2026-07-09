@@ -1,28 +1,41 @@
 #!/usr/bin/env node
-// Bündelt assets/ + data/ zu einer eigenständigen index.html, die auch
-// über file:// läuft (kein Server, kein fetch, keine absoluten Pfade).
-import { readFile, writeFile } from "node:fs/promises";
+// Baut zwei Auslieferungen aus assets/ + data/:
+//
+//   index.html  Eine eigenständige Datei. Läuft per Doppelklick über file://,
+//               ohne Server, ohne Netzwerk. Alles steckt darin.
+//   dist/       Getrennte Dateien für einen Webserver. Schriften, Stile und
+//               Bundle tragen einen Inhalts-Hash im Namen und sind damit
+//               dauerhaft cachebar; das Wörterbuch lädt nur, wer auf Deutsch
+//               schaltet. Ein englischer Erstbesuch spart so rund ein Drittel.
+//
+// Beide Wege teilen sich Bundle-Patches, Kopfbereich und boot.js. Sie
+// unterscheiden sich nur darin, woher series.json und das Wörterbuch kommen.
+import { readFile, writeFile, mkdir, rm, copyFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const root = dirname(fileURLToPath(import.meta.url));
 const read = (p) => readFile(join(root, p), "utf8");
+const hash = (s) => createHash("sha256").update(s).digest("hex").slice(0, 8);
 
 // Alle `<` im minifizierten JSON stehen zwangsläufig in String-Literalen,
 // die Ersetzung ist also verlustfrei und verhindert ein vorzeitiges </script>.
 const escapeJson = (s) => s.replace(/</g, "\\u003c");
+const minifyJson = (s) => JSON.stringify(JSON.parse(s));
 
-const [fonts, css, jsRaw, seriesRaw, dictRaw, i18nRuntime] = await Promise.all([
+const [fonts, css, jsRaw, seriesRaw, dictRaw, i18nRuntime, boot] = await Promise.all([
   read("assets/fonts.css"),
   read("assets/theme.css"),
   read("assets/index-B_LsmJIL.js"),
   read("data/series.json"),
   read("data/i18n.de.json"),
   read("assets/i18n-runtime.js"),
+  read("assets/boot.js"),
 ]);
 
-const series = escapeJson(JSON.stringify(JSON.parse(seriesRaw)));
-const dict = escapeJson(JSON.stringify(JSON.parse(dictRaw)));
+const series = minifyJson(seriesRaw);
+const dict = minifyJson(dictRaw);
 
 // Zwei chirurgische Eingriffe ins minifizierte Bundle. Beide werden geprüft:
 // ändert sich das Bundle, scheitert der Build, statt still Englisch zu bleiben.
@@ -49,24 +62,7 @@ js = patch(
   "Root-Render",
 );
 
-const html = `<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dungeon Crawler Carl — Character Sheets</title>
-    <meta name="description" content="Interactive character sheets for Carl and Princess Donut. Scrub through the timeline of Dungeon Crawler Carl and watch their stats, gear, and inventory evolve." />
-    <meta property="og:title" content="Dungeon Crawler Carl — Character Sheets" />
-    <meta property="og:description" content="Carl and Princess Donut, side by side. Drag the timeline and watch their stats, gear, and inventory evolve chapter by chapter. Spoiler-safe: you only see up to where you scrub." />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="og.png" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="og.png" />
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👑</text></svg>" />
-    <style>
-${fonts}
-${css}
-      .lang-toggle {
+const langToggleCss = `      .lang-toggle {
         position: fixed;
         top: 0.85rem;
         right: 0.85rem;
@@ -84,27 +80,40 @@ ${css}
         cursor: pointer;
       }
       .lang-toggle:hover { border-color: var(--amber); color: var(--amber); }
-      .lang-toggle:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
-    </style>
+      .lang-toggle:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }`;
+
+// `styles` ist entweder ein <style>-Block oder ein <link> auf die Stildatei.
+const head = (styles) => `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dungeon Crawler Carl — Character Sheets</title>
+    <meta name="description" content="Interactive character sheets for Carl and Princess Donut. Scrub through the timeline of Dungeon Crawler Carl and watch their stats, gear, and inventory evolve." />
+    <meta property="og:title" content="Dungeon Crawler Carl — Character Sheets" />
+    <meta property="og:description" content="Carl and Princess Donut, side by side. Drag the timeline and watch their stats, gear, and inventory evolve chapter by chapter. Spoiler-safe: you only see up to where you scrub." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="og.png" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👑</text></svg>" />
+${styles}
   </head>
   <body>
     <div id="root"></div>
+`;
 
-    <script type="application/json" id="series-data">
-${series}
-    </script>
+// ---------------------------------------------------------------------------
+// index.html — alles in einer Datei
+// ---------------------------------------------------------------------------
 
-    <script type="application/json" id="i18n-de">
-${dict}
-    </script>
-
-    <script>
-      (function () {
-        // Das React-Bundle lädt seine Daten über fetch("/data/series.json").
-        // Unter file:// ist fetch für lokale Pfade gesperrt, daher wird genau
-        // dieser Aufruf aus dem eingebetteten JSON bedient. Die App liest vom
-        // Ergebnis nur .ok, .status und .json(); ein echtes Response-Objekt
-        // würde die 1,4 MB zusätzlich nach UTF-8 kodieren und wieder dekodieren.
+// Das React-Bundle lädt seine Daten über fetch("/data/series.json"). Unter
+// file:// ist fetch für lokale Pfade gesperrt, daher wird genau dieser Aufruf
+// aus dem eingebetteten JSON bedient. Die App liest vom Ergebnis nur .ok,
+// .status und .json(); ein echtes Response-Objekt würde die 1,4 MB zusätzlich
+// nach UTF-8 kodieren und wieder dekodieren.
+const seriesFromPage = `      (function () {
+        "use strict";
         const DATA_URL = "/data/series.json";
         const native = window.fetch ? window.fetch.bind(window) : null;
         let cached = null;
@@ -124,38 +133,27 @@ ${dict}
           if (!native) return Promise.reject(new Error("fetch unavailable: " + url));
           return native(input, init);
         };
+      })();`;
 
-        // Die App merkt sich die gewählte Spoiler-Grenze und überspringt dann
-        // die Buchauswahl. Beim Öffnen soll sie aber immer erscheinen, also
-        // wird die gemerkte Wahl vor dem Start verworfen. Das Auswahlfeld in
-        // der Leiste schaltet weiterhin während der Sitzung um.
-        try {
-          localStorage.removeItem("dcc_book_cap");
-        } catch (e) {
-          /* Privater Modus: nichts zu verwerfen. */
-        }
+const singleFile = `${head(`    <style>
+${fonts}
+${css}
+${langToggleCss}
+    </style>`)}
+    <script type="application/json" id="series-data">
+${escapeJson(series)}
+    </script>
 
-        // Der Funken-Canvas gehört zum dunklen Theme und ist im hellen per CSS
-        // ausgeblendet. Seine Animationsschleife liefe dennoch weiter und
-        // zeichnete 60×/s mit Schattenwurf in einen mehrere Megapixel großen
-        // Puffer. Kontext und Puffer werden daher stillgelegt, sobald die App
-        // sie anfordert.
-        const getContext = HTMLCanvasElement.prototype.getContext;
-        const noop = function () {};
-        HTMLCanvasElement.prototype.getContext = function (...args) {
-          if (this.classList.contains("embers")) {
-            for (const dim of ["width", "height"]) {
-              Object.defineProperty(this, dim, {
-                get: () => 0,
-                set: noop,
-                configurable: true,
-              });
-            }
-            return new Proxy({}, { get: () => noop, set: () => true });
-          }
-          return getContext.apply(this, args);
-        };
-      })();
+    <script type="application/json" id="i18n-de">
+${escapeJson(dict)}
+    </script>
+
+    <script>
+${seriesFromPage}
+    </script>
+
+    <script>
+${boot}
     </script>
 
     <!-- Sprachschicht. Muss vor dem Bundle laufen: das Bundle greift beim
@@ -176,5 +174,81 @@ ${js}
 </html>
 `;
 
-await writeFile(join(root, "index.html"), html);
-console.log(`index.html geschrieben (${(html.length / 1024 / 1024).toFixed(2)} MB)`);
+await writeFile(join(root, "index.html"), singleFile);
+console.log(`index.html geschrieben (${(singleFile.length / 1024 / 1024).toFixed(2)} MB)`);
+
+// ---------------------------------------------------------------------------
+// dist/ — getrennte Dateien für einen Webserver
+// ---------------------------------------------------------------------------
+
+// Eingebettet müssen die Schriften base64 sein; als eigene Dateien kostet das
+// nur unnötige 33 % Aufschlag. Die data:-URIs werden daher wieder zu WOFF2.
+const fontFiles = [];
+const fontsLinked = fonts.replace(
+  /url\(data:font\/woff2;base64,([A-Za-z0-9+/=]+)\)/g,
+  (_, b64) => {
+    const name = `${hash(b64)}.woff2`;
+    fontFiles.push({ name, buf: Buffer.from(b64, "base64") });
+    return `url(fonts/${name})`;
+  },
+);
+if (fontFiles.length === 0) throw new Error("Keine eingebetteten Schriften in fonts.css gefunden");
+
+// Das Bundle fragt die Daten unter einem absoluten Pfad an. Relativ geholt
+// läuft die Seite auch in einem Unterverzeichnis, nicht nur im Wurzelpfad.
+const seriesOverHttp = `(function () {
+  "use strict";
+  const DATA_URL = "/data/series.json";
+  const native = window.fetch.bind(window);
+  window.fetch = function (input, init) {
+    const url = typeof input === "string" ? input : input && input.url;
+    if (url && url.endsWith(DATA_URL)) return native("data/series.json", init);
+    return native(input, init);
+  };
+})();
+`;
+
+const distCss = `${fontsLinked}\n${css}\n${langToggleCss}\n`;
+const distBoot = `${seriesOverHttp}\n${boot}`;
+
+const cssName = `app-${hash(distCss)}.css`;
+const bootName = `boot-${hash(distBoot)}.js`;
+const i18nName = `i18n-runtime-${hash(i18nRuntime)}.js`;
+const bundleName = `index-${hash(js)}.js`;
+
+// boot.js und die Sprachschicht sind klassische Skripte und laufen sofort; das
+// Bundle ist ein Modul und damit ohnehin aufgeschoben. Die Reihenfolge stimmt
+// also: window.__i18n steht, bevor das Bundle ausgewertet wird.
+const distHtml = `${head(`    <link rel="stylesheet" href="assets/${cssName}" />`)}
+    <script src="assets/${bootName}"></script>
+    <script src="assets/${i18nName}"></script>
+    <script type="module" src="assets/${bundleName}"></script>
+  </body>
+</html>
+`;
+
+const dist = join(root, "dist");
+await rm(dist, { recursive: true, force: true });
+await mkdir(join(dist, "assets", "fonts"), { recursive: true });
+await mkdir(join(dist, "data"), { recursive: true });
+
+await Promise.all([
+  writeFile(join(dist, "index.html"), distHtml),
+  writeFile(join(dist, "assets", cssName), distCss),
+  writeFile(join(dist, "assets", bootName), distBoot),
+  writeFile(join(dist, "assets", i18nName), i18nRuntime),
+  writeFile(join(dist, "assets", bundleName), js),
+  writeFile(join(dist, "data", "series.json"), series),
+  writeFile(join(dist, "data", "i18n.de.json"), dict),
+  copyFile(join(root, "og.png"), join(dist, "og.png")),
+  ...fontFiles.map((f) => writeFile(join(dist, "assets", "fonts", f.name), f.buf)),
+]);
+
+// Was ein englischer Erstbesuch tatsächlich zieht: alles ausser dem Wörterbuch.
+const eager =
+  distHtml.length + distCss.length + distBoot.length + i18nRuntime.length + js.length + series.length;
+console.log(
+  `dist/ geschrieben (${fontFiles.length} Schriften, ` +
+    `Erstbesuch auf Englisch ≈ ${(eager / 1024 / 1024).toFixed(2)} MB ` +
+    `+ ${(dict.length / 1024 / 1024).toFixed(2)} MB nur bei Deutsch)`,
+);

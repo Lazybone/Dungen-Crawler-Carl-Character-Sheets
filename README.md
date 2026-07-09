@@ -2,7 +2,8 @@
 
 Interaktive Charakterbögen für Carl und Prinzessin Donut, zweisprachig (Deutsch/Englisch).
 Die gesamte Anwendung steckt in einer einzigen `index.html`, die sich per Doppelklick
-über `file://` öffnen lässt — kein Server, kein Netzwerk, keine Installation.
+über `file://` öffnen lässt — kein Server, kein Netzwerk, keine Installation. Für einen
+Webserver entsteht daneben ein `dist/` mit getrennten, cachebaren Dateien.
 
 Ein inoffizielles Fanprojekt zur Reihe von Matt Dinniman.
 
@@ -15,12 +16,29 @@ um. Beim ersten Öffnen entscheidet die Browsersprache; danach wird die Wahl in
 ## Bauen
 
 ```sh
-node build.mjs        # bündelt assets/ + data/ zu index.html
+node build.mjs        # baut index.html und dist/ aus assets/ + data/
 ```
 
 `build.mjs` nimmt zwei chirurgische Eingriffe am minifizierten React-Bundle vor und
 prüft beide: Findet ein Muster nicht genau einen Treffer, bricht der Build ab, statt
 still auf Englisch zurückzufallen.
+
+### Zwei Auslieferungen
+
+| | `index.html` | `dist/` |
+|---|---|---|
+| Zweck | Doppelklick, `file://` | Webserver |
+| Daten | eingebettet | eigene Dateien |
+| Schriften | base64 im `<style>` | WOFF2, cachebar |
+| Wörterbuch | immer dabei | nur bei Sprachwahl Deutsch |
+| Erstbesuch (EN) | 2,7 MB | 1,7 MB |
+
+Beide teilen sich Bundle-Patches, Kopfbereich und `assets/boot.js`. Sie unterscheiden
+sich nur darin, woher `series.json` und das Wörterbuch kommen. In `dist/` tragen Stile,
+Skripte und Schriften einen Inhalts-Hash im Namen und sind damit dauerhaft cachebar;
+die Datenpfade sind relativ, die Seite läuft also auch in einem Unterverzeichnis.
+
+`dist/` ist nicht versioniert — `index.html` schon: sie ist das Produkt.
 
 `fonts.mjs` lädt die Schriften einmalig von Google Fonts und schreibt sie als
 `assets/fonts.css` mit eingebetteten WOFF2-Daten. Danach braucht weder der Build noch
@@ -54,7 +72,10 @@ Text zweimal durch das Nachschlagen.
 ### Nachschlagen in drei Stufen
 
 1. **Wörterbuch** — `data/i18n.de.json`, ein flaches `englisch → deutsch` mit rund
-   6.800 Einträgen (UI-Texte, Item-Namen, Beschreibungen, Ereignisse).
+   6.800 Einträgen (UI-Texte, Item-Namen, Beschreibungen, Ereignisse). In `index.html`
+   steckt es in der Seite; in `dist/` wird es erst geholt, wenn jemand auf Deutsch
+   schaltet. Scheitert das Laden, bleibt der Text englisch — dieselbe Regel wie bei
+   einer fehlenden Vokabel, nur für alle auf einmal.
 2. **Muster** — Texte, die das Bundle zur Laufzeit zusammensetzt, erreichen das
    Wörterbuch nie als Ganzes. `Book 7, Ch. 12` oder `194 total · 152 base +42 from gear`
    laufen deshalb über Regeln, deren Textanteile rekursiv wieder nachgeschlagen werden.
@@ -101,13 +122,16 @@ keine offiziellen deutschen Titel, an denen man sich ausrichten könnte.
 | Pfad | Zweck |
 |---|---|
 | `index.html` | Das fertige Ergebnis, eigenständig lauffähig |
-| `build.mjs` | Baut `index.html` aus `assets/` und `data/` |
+| `dist/` | Dieselbe App für einen Webserver (nicht versioniert) |
+| `build.mjs` | Baut beide aus `assets/` und `data/` |
 | `fonts.mjs` | Bettet die Schriften einmalig in `assets/fonts.css` ein |
+| `assets/boot.js` | Spoiler-Grenze zurücksetzen, Funken-Canvas stilllegen |
 | `assets/i18n-runtime.js` | Sprachschicht: JSX-Hook, Muster, Umschalter |
 | `assets/index-B_LsmJIL.js` | Das minifizierte React-Bundle |
 | `assets/theme.css`, `assets/fonts.css` | Styles und eingebettete Schriften |
 | `data/series.json` | Zeitleiste, Figuren, Gegenstände, Ereignisse (englisch) |
 | `data/i18n.de.json` | Wörterbuch englisch → deutsch |
+| `og.png` | Vorschaubild für `og:image`; der Build kopiert es nach `dist/` |
 | `tools/js-strings.mjs` | Tokenizer für minifiziertes JS |
 | `tools/extract-i18n.mjs` | Sammelt alle renderbaren Strings |
 | `tools/i18n-chunks.mjs` | Teilt auf und führt zusammen |
