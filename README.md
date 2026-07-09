@@ -40,6 +40,17 @@ die Datenpfade sind relativ, die Seite läuft also auch in einem Unterverzeichni
 
 `dist/` ist nicht versioniert — `index.html` schon: sie ist das Produkt.
 
+### Veröffentlichung
+
+Die Seite läuft auf GitHub Pages:
+
+**<https://lazybone.github.io/Dungen-Crawler-Carl-Character-Sheets/>**
+
+`.github/workflows/pages.yml` baut bei jedem Push auf `main` und lädt `dist/` als
+Pages-Artefakt hoch. `build.mjs` hat keine Abhängigkeiten, der Workflow braucht darum
+kein `npm install`. Weil `dist/` relative Pfade verwendet, funktioniert die Auslieferung
+aus dem Unterverzeichnis einer Projektseite ohne weitere Konfiguration.
+
 `fonts.mjs` lädt die Schriften einmalig von Google Fonts und schreibt sie als
 `assets/fonts.css` mit eingebetteten WOFF2-Daten. Danach braucht weder der Build noch
 die fertige Seite ein Netzwerk. Nur nötig, wenn sich die Schriften ändern sollen.
@@ -131,6 +142,7 @@ Buchtitel, auch wenn sie beinahe so heißen.
 | `index.html` | Das fertige Ergebnis, eigenständig lauffähig |
 | `dist/` | Dieselbe App für einen Webserver (nicht versioniert) |
 | `build.mjs` | Baut beide aus `assets/` und `data/` |
+| `.github/workflows/pages.yml` | Baut und deployt `dist/` nach GitHub Pages |
 | `fonts.mjs` | Bettet die Schriften einmalig in `assets/fonts.css` ein |
 | `assets/boot.js` | Spoiler-Grenze zurücksetzen, Funken-Canvas stilllegen |
 | `assets/i18n-runtime.js` | Sprachschicht: JSX-Hook, Muster, Umschalter |
@@ -138,7 +150,6 @@ Buchtitel, auch wenn sie beinahe so heißen.
 | `assets/theme.css`, `assets/fonts.css` | Styles und eingebettete Schriften |
 | `data/series.json` | Zeitleiste, Figuren, Gegenstände, Ereignisse (englisch) |
 | `data/i18n.de.json` | Wörterbuch englisch → deutsch |
-| `og.png` | Vorschaubild für `og:image`; der Build kopiert es nach `dist/` |
 | `tools/js-strings.mjs` | Tokenizer für minifiziertes JS |
 | `tools/extract-i18n.mjs` | Sammelt alle renderbaren Strings |
 | `tools/i18n-chunks.mjs` | Teilt auf und führt zusammen |

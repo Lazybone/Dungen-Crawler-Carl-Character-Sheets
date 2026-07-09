@@ -10,7 +10,7 @@
 //
 // Beide Wege teilen sich Bundle-Patches, Kopfbereich und boot.js. Sie
 // unterscheiden sich nur darin, woher series.json und das Wörterbuch kommen.
-import { readFile, writeFile, mkdir, rm, copyFile } from "node:fs/promises";
+import { readFile, writeFile, mkdir, rm } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
@@ -93,9 +93,6 @@ const head = (styles) => `<!doctype html>
     <meta property="og:title" content="Dungeon Crawler Carl — Character Sheets" />
     <meta property="og:description" content="Carl and Princess Donut, side by side. Drag the timeline and watch their stats, gear, and inventory evolve chapter by chapter. Spoiler-safe: you only see up to where you scrub." />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="og.png" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="og.png" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👑</text></svg>" />
 ${styles}
   </head>
@@ -240,7 +237,6 @@ await Promise.all([
   writeFile(join(dist, "assets", bundleName), js),
   writeFile(join(dist, "data", "series.json"), series),
   writeFile(join(dist, "data", "i18n.de.json"), dict),
-  copyFile(join(root, "og.png"), join(dist, "og.png")),
   ...fontFiles.map((f) => writeFile(join(dist, "assets", "fonts", f.name), f.buf)),
 ]);
 
