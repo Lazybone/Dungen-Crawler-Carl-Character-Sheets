@@ -26,6 +26,11 @@ still auf Englisch zurückzufallen.
 `assets/fonts.css` mit eingebetteten WOFF2-Daten. Danach braucht weder der Build noch
 die fertige Seite ein Netzwerk. Nur nötig, wenn sich die Schriften ändern sollen.
 
+Bei einer Variable Font liefert Google für jeden angefragten Schnitt dieselbe Datei.
+`fonts.mjs` fasst solche Blöcke zu einem `@font-face` mit Gewichtsspanne zusammen,
+statt dieselben Bytes mehrfach einzubetten — Open Sans lag sonst dreimal in der CSS,
+Inconsolata zweimal.
+
 ## Wie die Übersetzung funktioniert
 
 Das React-Bundle ist minifiziert und hat keine i18n-Schicht. Statt darin Dutzende
