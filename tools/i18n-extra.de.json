@@ -1,0 +1,28 @@
+{
+  " series by Matt Dinniman. All item names and characters belong to their creator — go read the books! Data is paraphrased from the text; spoilers only appear up to your slider position. Icons by ": " von Matt Dinniman. Alle Gegenstandsnamen und Figuren gehören ihrem Schöpfer — lest die Bücher! Die Daten sind aus dem Text paraphrasiert; Spoiler erscheinen nur bis zu eurer Reglerposition. Icons von ",
+  "From floor 6 on, the books stop itemizing Carl's level-up points and Marked for Death gains — base values here are last-confirmed, likely low.": "Ab Ebene 6 schlüsseln die Bücher Carls Stufenaufstiegspunkte und die Zugewinne durch Zum Tode gezeichnet nicht mehr auf — die Basiswerte hier sind die zuletzt bestätigten und vermutlich zu niedrig.",
+  "Ratings menu; live viewing is disabled on the first floor, so these stay at zero until floor two.": "Quotenmenü; die Live-Übertragung ist auf der ersten Ebene abgeschaltet, daher bleiben diese Werte bis Ebene zwei bei null.",
+  "Skills menu snapshot after filtering out trivial entries; nothing above 5 except Basic Electrical Repair, and most skills sit at 3. Carl is proficient with all firearms.": "Momentaufnahme des Fähigkeitenmenüs nach Aussortieren belangloser Einträge; nichts über 5 außer Einfache Elektroreparatur, die meisten Fähigkeiten liegen bei 3. Carl beherrscht alle Schusswaffen.",
+  "Stats cannot be manually adjusted yet; 3 stat points are earned per level-up but cannot be distributed until a race and class are chosen on the third floor.": "Attribute lassen sich noch nicht von Hand anpassen; pro Stufenaufstieg gibt es 3 Attributspunkte, verteilen lassen sie sich aber erst, wenn auf der dritten Ebene Rasse und Klasse gewählt sind.",
+  "Strength shows +3 when gauntlet is formed. Result of distributing 24 stat points: 10 to strength, 9 to constitution, 5 to intelligence.": "Stärke zeigt +3, sobald der Panzerhandschuh geformt ist. Ergebnis der Verteilung von 24 Attributspunkten: 10 auf Stärke, 9 auf Konstitution, 5 auf Intelligenz.",
+
+  "Agent Provocateur": "Agent Provocateur",
+  "Assassin of Sekhmet": "Assassine der Sekhmet",
+  "Cat": "Katze",
+  "Compensated Anarchist": "Bezahlter Anarchist",
+  "Deathbed Hellcat": "Sterbebett-Höllenkatze",
+  "Elite Gurkha Warrior": "Elite-Gurkha-Kriegerin",
+  "Football Hooligan": "Fußball-Hooligan",
+  "Former Child Actor": "Ehemaliger Kinderstar",
+  "Glass Cannon": "Glaskanone",
+  "Human": "Mensch",
+  "Legendary Diva": "Legendäre Diva",
+  "Master Telephone Psychic": "Meisterhafte Telefon-Hellseherin",
+  "Not yet assigned": "Noch nicht zugewiesen",
+  "Primal": "Urtümlich",
+  "The Oak Fell": "Die Eiche fiel",
+  "Viper Queen": "Vipernkönigin",
+
+  "empty": "leer",
+  "enchanted": "verzaubert"
+}

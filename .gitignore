@@ -1,0 +1,10 @@
+# Zwischenprodukte der Übersetzungs-Pipeline. Beide lassen sich jederzeit neu
+# erzeugen; die gepflegte Quelle der Wahrheit ist data/i18n.de.json.
+tools/i18n.source.json
+tools/i18n-chunks/
+
+# macOS
+.DS_Store
+
+# Node
+node_modules/
