@@ -1,5 +1,5 @@
 {
-  "iteration": 1,
+  "iteration": 2,
   "review_sha": "aadb8e2a5ef5dcbb6189618de1b0f34af8776207",
   "reviewer_fsm": {
     "logic": "DORMANT",
@@ -18,6 +18,6 @@
     "ee22daf79780(rejected)",
     "13f6b77d1b8f(rejected)"
   ],
-  "hardening_done": false,
+  "hardening_done": true,
   "off_budget_critical_runs": 0
 }
