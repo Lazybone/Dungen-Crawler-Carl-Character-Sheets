@@ -74,10 +74,15 @@ for (const rel of ["index.html", "dist/index.html"]) {
 const flavorRuntimeIndex = (html) => {
   const bySrc = html.indexOf("flavor-runtime-");
   if (bySrc !== -1) return bySrc;
-  return html.indexOf('getElementById("flavor-data")');
+  // Quote-tolerant: getElementById("flavor-data") oder ('flavor-data')
+  return html.search(/getElementById\((["'])flavor-data\1\)/);
 };
 for (const [rel, html] of Object.entries(htmls)) {
-  const dataIdx = html.indexOf('id="flavor-data"');
+  // Ans echte Script-Tag koppeln — das blosse Attribut kommt in index.html
+  // auch in einem Kommentar der Inline-Laufzeit vor (False-Pass-Gefahr).
+  // [^>\n]* statt [^>]*: der Kommentar erstreckt sich ueber einen Zeilen-
+  // umbruch und wuerde sonst weiterhin matchen; das echte Tag ist einzeilig.
+  const dataIdx = html.search(/<script[^>\n]*\bid=(["'])flavor-data\1/);
   const runtimeIdx = flavorRuntimeIndex(html);
   if (dataIdx === -1) {
     fail(`(b) ${rel} enthält keinen <script id="flavor-data">-Block`);

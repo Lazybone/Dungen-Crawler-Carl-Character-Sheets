@@ -1,12 +1,23 @@
 {
-  "iteration": 0,
-  "review_sha": null,
+  "iteration": 1,
+  "review_sha": "aadb8e2a5ef5dcbb6189618de1b0f34af8776207",
   "reviewer_fsm": {
-    "logic": "ACTIVE", "security": "ACTIVE",
-    "quality": "ACTIVE", "architecture": "ACTIVE"
+    "logic": "DORMANT",
+    "security": "DORMANT",
+    "quality": "DORMANT",
+    "architecture": "DORMANT",
+    "test-correctness": "ACTIVE",
+    "accessibility": "ACTIVE"
   },
   "stuck_findings": {},
-  "previous_findings": [],
+  "previous_findings": [
+    "f4bc4758d01d",
+    "88f7d8dee17a",
+    "1830d86bca23",
+    "43b5862d4147",
+    "ee22daf79780(rejected)",
+    "13f6b77d1b8f(rejected)"
+  ],
   "hardening_done": false,
   "off_budget_critical_runs": 0
 }

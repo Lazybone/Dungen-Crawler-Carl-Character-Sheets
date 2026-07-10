@@ -10304,7 +10304,7 @@ function Hc({ db: s, bookCap: m, timeline: a, onTravel: C, onClose: x }) {
                       emptyLine &&
                         f.jsx("span", {
                           className: "system-empty-line",
-                          style: { opacity: 0.7, fontSize: "0.8rem" },
+                          style: { color: "var(--ink-2)", fontSize: "0.8rem" },
                           children: detail,
                         }, "detail"),
                     ],

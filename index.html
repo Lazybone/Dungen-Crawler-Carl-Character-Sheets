@@ -1038,11 +1038,11 @@ h3 {
 
 /* Neon-Klammern rahmen das Wort wie einen Terminal-Prompt. */
 .system-tag::before {
-  content: "[";
+  content: "[" / "";
   color: color-mix(in srgb, var(--blue) 70%, var(--ink-3));
 }
 .system-tag::after {
-  content: "]";
+  content: "]" / "";
   color: color-mix(in srgb, var(--blue) 70%, var(--ink-3));
 }
 
@@ -1197,7 +1197,7 @@ h3 {
 }
 
 .toast-sys::before {
-  content: "▎";
+  content: "▎" / "";
   color: var(--blue);
   opacity: 0.8;
 }
@@ -12761,7 +12761,7 @@ function Hc({ db: s, bookCap: m, timeline: a, onTravel: C, onClose: x }) {
                       emptyLine &&
                         f.jsx("span", {
                           className: "system-empty-line",
-                          style: { opacity: 0.7, fontSize: "0.8rem" },
+                          style: { color: "var(--ink-2)", fontSize: "0.8rem" },
                           children: detail,
                         }, "detail"),
                     ],
