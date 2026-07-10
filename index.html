@@ -1341,21 +1341,27 @@ h3 {
 
 /* Die Fußnote spricht im Sprecher-Ton, behält aber ihre dezente Größe. */
 .footer-note.system-footer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.35rem;
+  /* Fließender Text statt gestapelter Spalten — hält den Footer flach. */
+  display: block;
+  max-width: min(94vw, 1200px);
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .system-footer .system-footer-line {
   color: var(--ink-3);
   font-size: 0.72rem;
   line-height: 1.55;
-  max-width: 64ch;
+}
+
+.system-footer .system-footer-line + .system-footer-line::before {
+  content: " · " / "";
+  color: var(--ink-4);
 }
 
 .system-footer .system-tag {
   font-size: 0.56rem;
+  margin-right: 0.4rem;
 }
 
 /* ------------------------------------------------ timeline: die Sendeleiste
