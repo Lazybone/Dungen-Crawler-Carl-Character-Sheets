@@ -1,0 +1,87 @@
+{
+  "loader": [
+    { "en": "Booting the dungeon. Try not to die in the first ten seconds.", "de": "Fahre den Dungeon hoch. Versuch, in den ersten zehn Sekunden nicht zu verrecken." },
+    { "en": "Loading the crawl. The sponsors are already bored, so hurry it up.", "de": "Lade den Crawl. Die Sponsoren langweilen sich schon, also mach hin." },
+    { "en": "Spinning up the floor. Mind the collapsing ceiling, meatbag.", "de": "Fahre die Etage hoch. Pass auf die einstürzende Decke auf, du Fleischsack." },
+    { "en": "Initializing. Ratings pending. Survival optional.", "de": "Initialisiere. Quote ausstehend. Überleben optional." },
+    { "en": "Warming up the meat grinder. Almost showtime.", "de": "Wärme den Fleischwolf an. Gleich ist Sendezeit." },
+    { "en": "Downloading your inevitable death animation. Please hold.", "de": "Lade deine unausweichliche Todesanimation. Bitte warten." },
+    { "en": "Reticulating dungeon splines. Or whatever. You wouldn't get it.", "de": "Justiere die Dungeon-Splines. Oder so. Du würdest es eh nicht kapieren." }
+  ],
+  "gate": [
+    { "en": "How far into the crawl are you, meatbag? Pick your poison.", "de": "Wie tief steckst du im Crawl, Fleischsack? Wähl dein Gift." },
+    { "en": "Which floor have you crawled to? Lie, and you'll spoil your own show.", "de": "Bis zu welcher Etage bist du gekrochen? Lüg, und du verdirbst dir deine eigene Show." },
+    { "en": "State your progress. The System does not do refunds for spoilers.", "de": "Gib deinen Fortschritt an. Das System erstattet keine Spoiler." },
+    { "en": "How many floors deep are you? Choose, before something chooses for you.", "de": "Wie viele Etagen tief bist du? Wähl, bevor etwas für dich wählt." },
+    { "en": "Set your spoiler cap. The audience despises a cheater.", "de": "Setz deine Spoiler-Grenze. Das Publikum verachtet Betrüger." },
+    { "en": "Where are you in the story? Be honest, nobody's watching. Except everyone.", "de": "Wo stehst du in der Geschichte? Sei ehrlich, keiner schaut zu. Außer allen." }
+  ],
+  "empty_search": [
+    { "en": "Nothing matches. Even the search algorithm gave up on you.", "de": "Nichts gefunden. Selbst der Suchalgorithmus hat dich aufgegeben." },
+    { "en": "No results. Try spelling it like a creature with thumbs.", "de": "Keine Treffer. Versuch, es zu tippen wie ein Wesen mit Daumen." },
+    { "en": "The System found nothing. Shocking, given the input.", "de": "Das System hat nichts gefunden. Überraschend, bei der Eingabe." },
+    { "en": "Zero matches. The audience is laughing, and not with you.", "de": "Null Treffer. Das Publikum lacht, und nicht mit dir." },
+    { "en": "Nothing here. Maybe it's on a floor you haven't survived yet.", "de": "Nichts hier. Vielleicht auf einer Etage, die du noch nicht überlebt hast." },
+    { "en": "No such thing exists. Or it does and the System is hiding it. Rude, right?", "de": "So etwas gibt es nicht. Oder doch, und das System versteckt es. Fies, was?" }
+  ],
+  "empty_inventory": [
+    { "en": "Nothing here yet. Even the goblins are carrying more than you.", "de": "Noch nichts hier. Selbst die Goblins schleppen mehr mit sich rum als du." },
+    { "en": "Empty. Your inventory is as barren as your survival odds.", "de": "Leer. Dein Inventar ist so kahl wie deine Überlebenschancen." },
+    { "en": "No loot yet. Crack open a box, coward.", "de": "Noch keine Beute. Mach eine Kiste auf, du Feigling." },
+    { "en": "Nothing to see. The System is embarrassed on your behalf.", "de": "Nichts zu sehen. Das System schämt sich stellvertretend für dich." },
+    { "en": "Bag's empty. The sponsors are not impressed, meatbag.", "de": "Tasche leer. Die Sponsoren sind nicht beeindruckt, Fleischsack." },
+    { "en": "Zero items. Somewhere a loot box is weeping.", "de": "Null Gegenstände. Irgendwo weint eine Beutekiste." }
+  ],
+  "footer": [
+    { "en": "Unofficial fan project. The System accepts no liability for your life choices. Goddammit, Donut.", "de": "Inoffizielles Fanprojekt. Das System übernimmt keine Haftung für deine Lebensentscheidungen. Verdammt, Donut." },
+    { "en": "Made by fans, not by the System. The System would have charged you for it.", "de": "Von Fans gemacht, nicht vom System. Das System hätte dich dafür zur Kasse gebeten." },
+    { "en": "Unofficial. No meatbags were rescued in the making of this page.", "de": "Inoffiziell. Bei der Erstellung dieser Seite wurde kein Fleischsack gerettet." },
+    { "en": "Fan project. Paraphrased, never quoted. The lawyers are watching too.", "de": "Fanprojekt. Umschrieben, nie zitiert. Die Anwälte schauen auch zu." },
+    { "en": "The System is not sponsoring this. The System sponsors nothing for free.", "de": "Das System sponsert das hier nicht. Das System sponsert nichts umsonst." },
+    { "en": "Built by the audience, for the audience. Try to look entertained.", "de": "Vom Publikum gebaut, fürs Publikum. Tu wenigstens unterhalten." }
+  ],
+  "toast": {
+    "level_up": [
+      { "en": "Ding! Congratulations, meatbag.", "de": "Pling! Glückwunsch, du Sack Fleisch." },
+      { "en": "Level up. Try not to let it go to your tiny head.", "de": "Level up. Lass es dir nicht zu Kopf steigen, du Winzhirn." },
+      { "en": "You leveled. The audience clapped. Briefly.", "de": "Du bist aufgestiegen. Das Publikum hat geklatscht. Kurz." },
+      { "en": "Ding. A little stronger, still hilariously mortal.", "de": "Pling. Ein bisschen stärker, immer noch urkomisch sterblich." },
+      { "en": "Level gained. The System is contractually obligated to sound impressed.", "de": "Level erreicht. Das System ist vertraglich verpflichtet, beeindruckt zu klingen." }
+    ],
+    "item_gained": [
+      { "en": "You looted a thing. The audience is mildly entertained.", "de": "Du hast was abgestaubt. Das Publikum ist mäßig unterhalten." },
+      { "en": "Item acquired. Don't get attached, meatbag.", "de": "Gegenstand erhalten. Häng dein Herz nicht dran, Fleischsack." },
+      { "en": "You found loot. Somewhere a sponsor smiled.", "de": "Du hast Beute gefunden. Irgendwo lächelte ein Sponsor." },
+      { "en": "New shiny in the bag. It's probably cursed. Probably.", "de": "Neuer Glitzerkram in der Tasche. Wahrscheinlich verflucht. Wahrscheinlich." },
+      { "en": "Acquired. The loot box gods will demand tribute later.", "de": "Erhalten. Die Beutekisten-Götter fordern später Tribut." }
+    ],
+    "achievement": [
+      { "en": "Achievement unlocked. The bar was on the floor, but well done.", "de": "Errungenschaft freigeschaltet. Die Latte lag am Boden, aber gut gemacht." },
+      { "en": "You did a thing worth noting. Barely.", "de": "Du hast etwas Erwähnenswertes getan. Gerade so." },
+      { "en": "Achievement earned. The System is as surprised as you are.", "de": "Errungenschaft verdient. Das System ist genauso überrascht wie du." },
+      { "en": "Unlocked. Frame it, you won't collect many.", "de": "Freigeschaltet. Rahm es ein, du kriegst nicht viele." },
+      { "en": "Still breathing this far down? The System is genuinely annoyed.", "de": "Immer noch am Atmen so tief unten? Das System ist ehrlich genervt.", "minBook": 3 }
+    ],
+    "title_gained": [
+      { "en": "New title earned. Wear it like the meatbag you are.", "de": "Neuer Titel verdient. Trag ihn wie der Fleischsack, der du bist." },
+      { "en": "You've been titled. Don't let it inflate that skull.", "de": "Du wurdest betitelt. Lass es nicht deinen Schädel aufblähen." },
+      { "en": "A title, for you. The System spat it out grudgingly.", "de": "Ein Titel, für dich. Das System hat ihn widerwillig ausgespuckt." },
+      { "en": "Titled. The sponsors already want it printed on merch.", "de": "Betitelt. Die Sponsoren wollen ihn schon auf Merch drucken." },
+      { "en": "New designation granted. Try to live up to it. Or don't.", "de": "Neue Bezeichnung verliehen. Versuch, ihr gerecht zu werden. Oder auch nicht." }
+    ],
+    "spell_gained": [
+      { "en": "New spell learned. Try not to fry yourself, meatbag.", "de": "Neuer Zauber gelernt. Versuch, dich nicht selbst zu frittieren, Fleischsack." },
+      { "en": "Spell acquired. Point it away from your own face.", "de": "Zauber erhalten. Richte ihn weg von deinem eigenen Gesicht." },
+      { "en": "You learned magic. The System rates your odds of self-immolation as generous.", "de": "Du hast Magie gelernt. Das System schätzt deine Chance auf Selbstentzündung großzügig ein." },
+      { "en": "New incantation unlocked. The audience loves a good explosion.", "de": "Neue Beschwörung freigeschaltet. Das Publikum liebt eine gute Explosion." },
+      { "en": "Spell added. Read the fine print, there's always fine print.", "de": "Zauber hinzugefügt. Lies das Kleingedruckte, es gibt immer Kleingedrucktes." }
+    ],
+    "floor_change": [
+      { "en": "Descending a floor. The exits are sealing behind you, obviously.", "de": "Du steigst eine Etage tiefer. Die Ausgänge versiegeln sich hinter dir, na klar." },
+      { "en": "New floor. Fresh ways to die await, meatbag.", "de": "Neue Etage. Frische Arten zu sterben warten, Fleischsack." },
+      { "en": "Floor cleared. The System resets the death traps below.", "de": "Etage geschafft. Das System stellt die Todesfallen darunter neu." },
+      { "en": "Welcome to the next floor. Ratings say you won't like it.", "de": "Willkommen auf der nächsten Etage. Die Quote sagt, sie wird dir nicht gefallen." },
+      { "en": "The deeper floors stopped handing out tutorials. Good luck.", "de": "Die tieferen Etagen teilen keine Tutorials mehr aus. Viel Glück.", "minBook": 5 }
+    ]
+  }
+}
