@@ -16,7 +16,10 @@
     "1830d86bca23",
     "43b5862d4147",
     "ee22daf79780(rejected)",
-    "13f6b77d1b8f(rejected)"
+    "13f6b77d1b8f(rejected)",
+    "1e727e4328b7",
+    "bf02a5775873",
+    "a1c7f0e93b52(accepted-tradeoff)"
   ],
   "hardening_done": true,
   "off_budget_critical_runs": 0
