@@ -19,9 +19,11 @@ um. Beim ersten Öffnen entscheidet die Browsersprache; danach wird die Wahl in
 node build.mjs        # baut index.html und dist/ aus assets/ + data/
 ```
 
-`build.mjs` nimmt zwei chirurgische Eingriffe am minifizierten React-Bundle vor und
-prüft beide: Findet ein Muster nicht genau einen Treffer, bricht der Build ab, statt
-still auf Englisch zurückzufallen.
+`build.mjs` baut aus lesbarer Quelle: `assets/app.js` ist das entminifizierte
+React-Bundle. Die beiden i18n-Haken stehen fest im Quelltext — `build.mjs` patcht nichts
+mehr, sondern besteht nur noch darauf, dass jeder genau einmal vorkommt. Bei jeder anderen
+Zahl bricht der Build ab, statt still auf Englisch zurückzufallen oder den Root doppelt zu
+mounten.
 
 ### Zwei Auslieferungen
 
@@ -33,8 +35,9 @@ still auf Englisch zurückzufallen.
 | Wörterbuch | immer dabei | nur bei Sprachwahl Deutsch |
 | Erstbesuch (EN) | 2,7 MB | 1,7 MB |
 
-Beide teilen sich Bundle-Patches, Kopfbereich und `assets/boot.js`. Sie unterscheiden
-sich nur darin, woher `series.json` und das Wörterbuch kommen. In `dist/` tragen Stile,
+Beide teilen sich Bundle, Kopfbereich, `assets/boot.js` und die inline eingebetteten
+Sprüche-Pools (siehe unten). Sie unterscheiden sich nur darin, woher `series.json` und das
+Wörterbuch kommen. In `dist/` tragen Stile,
 Skripte und Schriften einen Inhalts-Hash im Namen und sind damit dauerhaft cachebar;
 die Datenpfade sind relativ, die Seite läuft also auch in einem Unterverzeichnis.
 
@@ -62,10 +65,17 @@ Inconsolata zweimal.
 
 ## Wie die Übersetzung funktioniert
 
-Das React-Bundle ist minifiziert und hat keine i18n-Schicht. Statt darin Dutzende
-Textstellen zu patchen, umhüllt `assets/i18n-runtime.js` die **JSX-Fabrik**: `jsx` und
-`jsxs` zeigen auf dieselbe Funktion, und es gibt genau eine Bindung darauf. Dadurch
-läuft jeder gerenderte Textknoten durch eine Übersetzungsfunktion.
+Das React-Bundle hat keine eigene i18n-Schicht. Statt darin Dutzende Textstellen zu
+patchen, umhüllt `assets/i18n-runtime.js` die **JSX-Fabrik**: `jsx` und `jsxs` zeigen auf
+dieselbe Funktion, und es gibt genau eine Bindung darauf. Dadurch läuft jeder gerenderte
+Textknoten durch eine Übersetzungsfunktion.
+
+Der Haken selbst steht fest im Quelltext. `assets/app.js` ist das entminifizierte
+React-Bundle und die gepflegte Quelle — ein lesbarer Nachbau, in dem der App-Code hinter
+einer markierten React-Vendor-Region liegt (die bleibt byte-genau unangetastet). Der
+Aufruf `window.__i18n.wrapJsx(...)` an der JSX-Fabrik und `window.__i18n.mount(...)` am
+Root-Render sind Teil dieser Quelle; `build.mjs` fügt sie nicht mehr per String-Chirurgie
+ein, sondern prüft nur, dass jeder genau einmal vorkommt.
 
 Übersetzt wird **beim Rendern, nicht in den Daten.** Das ist notwendig, nicht
 Geschmackssache: In `series.json` sind `slot`, `rarity` und `name` gleichzeitig
@@ -135,6 +145,33 @@ werden weiterhin übersetzt: das Artefaktset `Gate of the Feral Gods` (ohne `The
 `Eye of the Bedlam Bride Tattoo` und die Maskerade als Veranstaltung sind keine
 Buchtitel, auch wenn sie beinahe so heißen.
 
+## Die »System«-Sprüche
+
+Flächen mit hoher Sichtbarkeit — Ladebildschirm, Spoiler-Gate, leere Zustände, Fußzeile
+und die Toasts — sprechen mit der derben Stimme des »System«-Ansagers aus der Reihe. Die
+Sprüche liefert `data/flavor.json`: pro Fläche ein Pool zweisprachiger Einträge
+(`{ "en": …, "de": … }`), manche mit `minBook`, damit ein Spruch erst ab einem bestimmten
+Buch auftaucht und keine Handlung vorwegnimmt.
+
+`assets/flavor-runtime.js` stellt `window.__flavor` bereit — dieselbe Bauart wie
+`window.__i18n`. Die Pools stecken als `<script type="application/json" id="flavor-data">`
+in **beiden** Builds in der Seite und stehen vor dem ersten Paint bereit; nichts wird
+nachgeladen, in `dist/` entsteht keine eigene Datendatei. `__flavor.pick(surface, { lang,
+cap, seedKey })` löst den Pool auf, wirft Einträge über der Spoiler-Kappe raus und zieht
+eine Zeile — mit `seedKey` deterministisch, sonst zufällig. Fehlt der Datenblock oder ein
+Spruch, fällt jede Fläche auf ihren fest verdrahteten englischen Default zurück, genau wie
+das Wörterbuch bei einer fehlenden Vokabel.
+
+Der Auswahlvertrag: Ladeflächen ziehen beim Mounten einen Zufallsindex und halten ihn über
+die App-Laufzeit fest — die Zeile wechselt zwischen App-Starts, überlebt aber einen
+Sprachwechsel unverändert (nur übersetzt). Toasts sind pro Ereignis deterministisch:
+derselbe Toast zeigt immer denselben Spruch. Lücken findet man wie beim i18n über
+`__flavor.misses()` in der Konsole.
+
+`mockups/` hält statische HTML-Vorschauen jeder umgestalteten Fläche. Sie binden das echte
+`assets/theme.css` ein und lassen sich direkt im Browser öffnen — reine Design-Referenz,
+kein Build, kein JavaScript.
+
 ## Dateien
 
 | Pfad | Zweck |
@@ -146,10 +183,13 @@ Buchtitel, auch wenn sie beinahe so heißen.
 | `fonts.mjs` | Bettet die Schriften einmalig in `assets/fonts.css` ein |
 | `assets/boot.js` | Spoiler-Grenze zurücksetzen, Funken-Canvas stilllegen |
 | `assets/i18n-runtime.js` | Sprachschicht: JSX-Hook, Muster, Umschalter |
-| `assets/index-B_LsmJIL.js` | Das minifizierte React-Bundle |
+| `assets/flavor-runtime.js` | Sprücheschicht: `window.__flavor`, zieht aus den Pools |
+| `assets/app.js` | Das entminifizierte React-Bundle, gepflegte Quelle |
 | `assets/theme.css`, `assets/fonts.css` | Styles und eingebettete Schriften |
 | `data/series.json` | Zeitleiste, Figuren, Gegenstände, Ereignisse (englisch) |
 | `data/i18n.de.json` | Wörterbuch englisch → deutsch |
+| `data/flavor.json` | Zweisprachige »System«-Sprüche pro Fläche |
+| `mockups/` | Statische Design-Vorschauen der Flächen (nicht im Build) |
 | `tools/js-strings.mjs` | Tokenizer für minifiziertes JS |
 | `tools/extract-i18n.mjs` | Sammelt alle renderbaren Strings |
 | `tools/i18n-chunks.mjs` | Teilt auf und führt zusammen |
@@ -167,5 +207,7 @@ Codefragmente für Strings hält.
 ## Rechtliches
 
 Inoffizielles Fanprojekt. Alle Gegenstandsnamen und Figuren gehören ihrem Schöpfer
-Matt Dinniman. Die Daten sind aus dem Text paraphrasiert, nicht daraus zitiert.
+Matt Dinniman. Die Daten sind aus dem Text paraphrasiert, nicht daraus zitiert; auch die
+»System«-Sprüche in `data/flavor.json` sind eigene Pastiche in dieser Stimme —
+paraphrasiert, nicht daraus zitiert. Der derbe, vulgäre Ton des Ansagers ist Absicht.
 Icons von [game-icons.net](https://game-icons.net) (CC BY 3.0).
