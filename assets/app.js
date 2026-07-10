@@ -10292,7 +10292,7 @@ function Hc({ db: s, bookCap: m, timeline: a, onTravel: C, onClose: x }) {
             children: [
               w.length === 0 &&
                 (() => {
-                  const detail = `Nothing in the first ${m === 1 ? "book" : `${m} books`} matches “${g}”.`;
+                  const detail = ["Nothing in the first ", m === 1 ? "book" : `${m} books`, " matches “", g, "”."];
                   return f.jsxs("div", {
                     className: "palette-empty system-empty-block",
                     children: [
