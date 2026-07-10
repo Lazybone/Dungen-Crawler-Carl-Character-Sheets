@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>System-Leerzustände — Mockup</title>
+    <link rel="stylesheet" href="../assets/fonts.css" />
+    <link rel="stylesheet" href="../assets/theme.css" />
+    <link rel="stylesheet" href="flavor.css" />
+  </head>
+  <body>
+    <div class="mock-page">
+      <a class="mock-back" href="index.html">&larr; Galerie</a>
+      <h1 class="mock-title">Leerzustände</h1>
+      <p class="mock-lead">
+        Leeres Inventar, leere Suche und leere Ausrüstungs-Slots reden im
+        Sprecher-Ton. Ein leerer Slot (<code>.slot.empty.system-empty</code>)
+        trägt ein kleines <code>SYSTEM</code>-Tag und eine spöttische Zeile; für
+        ganze Panels dient der freistehende <code>.system-empty-block</code>. Jede
+        Fläche behält ihren hartkodierten englischen Default als Fallback.
+      </p>
+
+      <!-- Leeres Inventar -->
+      <div class="mock-section">
+        <h2>empty_inventory — Panel</h2>
+        <div class="mock-pair">
+          <div class="mock-lang" data-lang="en">
+            <span class="mock-flag">EN</span>
+            <div class="mock-stage">
+              <div class="system-empty-block">
+                <span class="system-tag">SYSTEM</span>
+                <span class="system-empty-line">Nothing here yet. Even the goblins are carrying more than you.</span>
+              </div>
+            </div>
+          </div>
+          <div class="mock-lang" data-lang="de">
+            <span class="mock-flag">DE</span>
+            <div class="mock-stage">
+              <div class="system-empty-block">
+                <span class="system-tag">SYSTEM</span>
+                <span class="system-empty-line">Noch nichts hier. Selbst die Goblins schleppen mehr mit sich rum als du.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="mock-note">
+          Weiter im Pool: EN „Empty. Loot something, crawler. The audience is
+          getting bored." / DE „Leer. Raff was zusammen, Crawler. Das Publikum
+          langweilt sich."
+        </p>
+      </div>
+
+      <!-- Leere Suche -->
+      <div class="mock-section">
+        <h2>empty_search — Panel</h2>
+        <div class="mock-pair">
+          <div class="mock-lang" data-lang="en">
+            <span class="mock-flag">EN</span>
+            <div class="mock-stage">
+              <div class="system-empty-block">
+                <span class="system-tag">SYSTEM</span>
+                <span class="system-empty-line">Nothing matches. The search algorithm is as lost as you are.</span>
+              </div>
+            </div>
+          </div>
+          <div class="mock-lang" data-lang="de">
+            <span class="mock-flag">DE</span>
+            <div class="mock-stage">
+              <div class="system-empty-block">
+                <span class="system-tag">SYSTEM</span>
+                <span class="system-empty-line">Nichts gefunden. Die Suche ist genauso planlos wie du.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="mock-note">
+          Weiter im Pool: EN „Zero results. Even the goblins couldn't find that." /
+          DE „Null Treffer. Nicht mal die Goblins hätten das gefunden."
+        </p>
+      </div>
+
+      <!-- Leerer Ausrüstungs-Slot -->
+      <div class="mock-section">
+        <h2>.slot.empty.system-empty — einzelner Slot</h2>
+        <div class="mock-pair">
+          <div class="mock-lang" data-lang="en">
+            <span class="mock-flag">EN</span>
+            <div class="mock-stage">
+              <div class="equip-grid" style="width: 100%">
+                <div class="slot empty system-empty">
+                  <span class="system-empty-tag">Empty slot</span>
+                  <span class="system-empty-line">No weapon. Bold survival strategy, crawler.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mock-lang" data-lang="de">
+            <span class="mock-flag">DE</span>
+            <div class="mock-stage">
+              <div class="equip-grid" style="width: 100%">
+                <div class="slot empty system-empty">
+                  <span class="system-empty-tag">Leerer Slot</span>
+                  <span class="system-empty-line">Keine Waffe. Mutige Überlebensstrategie, Crawler.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="mock-note">
+          Der leere Slot behält das dezente Theme-Grau; nur Tag und Zeile kommen
+          hinzu. Gefüllte Slots bleiben unverändert.
+        </p>
+      </div>
+
+      <div class="mock-section">
+        <h2>Fallback (leerer/kaputter Pool)</h2>
+        <div class="mock-stage">
+          <div class="system-empty-block">
+            <span class="system-empty-line">Not yet revealed in the story</span>
+          </div>
+        </div>
+        <p class="mock-note">
+          Ohne Pool zeigt die Fläche ihren unveränderten hartkodierten Default —
+          hier der bestehende englische Text.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

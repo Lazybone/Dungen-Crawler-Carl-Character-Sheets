@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>System-Loader — Mockup</title>
+    <link rel="stylesheet" href="../assets/fonts.css" />
+    <link rel="stylesheet" href="../assets/theme.css" />
+    <link rel="stylesheet" href="flavor.css" />
+  </head>
+  <body>
+    <div class="mock-page">
+      <a class="mock-back" href="index.html">&larr; Galerie</a>
+      <h1 class="mock-title">System-Loader</h1>
+      <p class="mock-lead">
+        Der Ladezustand (<code>.loading.system-loading</code>) ersetzt das nüchterne
+        „Entering the dungeon…" durch das <code>[ SYSTEM ]</code>-Tag mit blinkendem
+        Caret und einer pro Start rotierenden, spöttischen Zeile. Der statische
+        englische Default („Entering the dungeon…") bleibt Fallback, falls der Pool
+        leer/kaputt ist.
+      </p>
+
+      <div class="mock-section">
+        <h2>Rotierende Zeile — EN / DE</h2>
+        <div class="mock-pair">
+          <div class="mock-lang" data-lang="en">
+            <span class="mock-flag">EN</span>
+            <div class="mock-stage tall">
+              <div class="loading system-loading">
+                <span class="system-tag system-tag--caret">SYSTEM<span class="system-caret"></span></span>
+                <span class="system-loader-line">Booting the dungeon. Try not to die in the first ten seconds.</span>
+              </div>
+            </div>
+          </div>
+          <div class="mock-lang" data-lang="de">
+            <span class="mock-flag">DE</span>
+            <div class="mock-stage tall">
+              <div class="loading system-loading">
+                <span class="system-tag system-tag--caret">SYSTEM<span class="system-caret"></span></span>
+                <span class="system-loader-line">Fahre den Dungeon hoch. Versuch, nicht in den ersten zehn Sekunden zu verrecken.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mock-section">
+        <h2>Weitere Pool-Beispiele</h2>
+        <div class="mock-pair">
+          <div class="mock-lang" data-lang="en">
+            <span class="mock-flag">EN</span>
+            <div class="mock-stage tall">
+              <div class="loading system-loading">
+                <span class="system-tag system-tag--caret">SYSTEM<span class="system-caret"></span></span>
+                <span class="system-loader-line">Loading your pathetic little character. This won't take long — unlike your survival.</span>
+              </div>
+            </div>
+          </div>
+          <div class="mock-lang" data-lang="de">
+            <span class="mock-flag">DE</span>
+            <div class="mock-stage tall">
+              <div class="loading system-loading">
+                <span class="system-tag system-tag--caret">SYSTEM<span class="system-caret"></span></span>
+                <span class="system-loader-line">Lade deinen erbärmlichen kleinen Charakter. Dauert nicht lang — anders als dein Überleben.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="mock-note">
+          Weiter im Pool: EN „Spinning up the meat grinder. Please hold, crawler." /
+          DE „Fahre den Fleischwolf an. Bitte warten, Crawler."
+        </p>
+      </div>
+
+      <div class="mock-section">
+        <h2>Fallback (leerer/kaputter Pool)</h2>
+        <div class="mock-stage tall">
+          <div class="loading">Entering the dungeon…</div>
+        </div>
+        <p class="mock-note">
+          Ohne <code>system-loading</code> greift die unveränderte Theme-Regel
+          <code>.loading</code> mit dem hartkodierten englischen Default.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>System-Toasts — Mockup</title>
+    <link rel="stylesheet" href="../assets/fonts.css" />
+    <link rel="stylesheet" href="../assets/theme.css" />
+    <link rel="stylesheet" href="flavor.css" />
+  </head>
+  <body>
+    <!-- Wiederverwendbares Glyph-Set (viewBox 0 0 512 512, game-icons-Stil,
+         currentColor). level_up ist der echte Bundle-Pfad; die übrigen sind
+         die neu gezeichneten Sprecher-Glyphen (Redesign sichtbar). -->
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <defs>
+        <symbol id="ic-level_up" viewBox="0 0 512 512">
+          <path
+            fill="currentColor"
+            d="M256 29.816l-231 154v106.368l231-154 231 154V183.816zm0 128.043L105 259.783v90.283l151-101.925 151 101.925v-90.283zm0 112l-87 58.725v67.6l87-58 87 58v-67.6zm0 89.957l-87 58v64.368l87-58 87 58v-64.368z"
+          />
+        </symbol>
+        <symbol id="ic-item_gained" viewBox="0 0 512 512">
+          <g fill="currentColor">
+            <path d="M96 176q0-40 40-40h240q40 0 40 40v32H96z" />
+            <path d="M88 208h336v168q0 24-24 24H112q-24 0-24-24z" />
+            <rect x="236" y="188" width="40" height="60" rx="6" />
+            <rect x="248" y="216" width="16" height="26" rx="4" fill="#0a090d" />
+          </g>
+        </symbol>
+        <symbol id="ic-achievement" viewBox="0 0 512 512">
+          <g fill="currentColor">
+            <path d="M168 88h176v72a88 88 0 0 1-176 0z" />
+            <path d="M168 104h-44a40 40 0 0 0 44 60z" />
+            <path d="M344 104h44a40 40 0 0 1-44 60z" />
+            <rect x="240" y="238" width="32" height="58" />
+            <rect x="196" y="294" width="120" height="26" rx="6" />
+            <rect x="176" y="320" width="160" height="34" rx="6" />
+          </g>
+        </symbol>
+        <symbol id="ic-title_gained" viewBox="0 0 512 512">
+          <g fill="currentColor">
+            <path d="M72 392V176l80 72 104-112 104 112 80-72v216z" />
+            <rect x="64" y="388" width="384" height="44" rx="8" />
+          </g>
+        </symbol>
+        <symbol id="ic-spell_gained" viewBox="0 0 512 512">
+          <path
+            fill="currentColor"
+            d="M256 48c24 120 88 184 208 208-120 24-184 88-208 208-24-120-88-184-208-208 120-24 184-88 208-208z"
+          />
+        </symbol>
+        <symbol id="ic-floor_change" viewBox="0 0 512 512">
+          <path
+            fill="currentColor"
+            d="M96 112h96v72h72v72h72v72h80v56H96z"
+          />
+        </symbol>
+      </defs>
+    </svg>
+
+    <div class="mock-page">
+      <a class="mock-back" href="index.html">&larr; Galerie</a>
+      <h1 class="mock-title">System-Toasts</h1>
+      <p class="mock-lead">
+        Jede Benachrichtigung wird zur „System"-Meldungskarte: monospacer
+        <code>SYSTEM</code>-Header, glühende kind-farbige Schiene links, darunter
+        Kind-Label und die rotierende, spöttische Flavor-Zeile. Beispieltexte je
+        Kind links Englisch, rechts Deutsch — dieselbe Karte, nur andere Sprache.
+      </p>
+
+      <!-- LEVEL UP -->
+      <div class="mock-section">
+        <h2>toast-level_up</h2>
+        <div class="mock-pair">
+          <div class="mock-lang" data-lang="en">
+            <span class="mock-flag">EN</span>
+            <div class="mock-stage">
+              <div class="toasts">
+                <div class="toast toast-level_up">
+                  <span class="toast-icon"><svg><use href="#ic-level_up" /></svg></span>
+                  <div class="toast-copy">
+                    <div class="toast-sys">SYSTEM</div>
+                    <div class="toast-head">Level Up</div>
+                    <div class="toast-body">Ding! Congratulations, meatbag.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mock-lang" data-lang="de">
+            <span class="mock-flag">DE</span>
+            <div class="mock-stage">
+              <div class="toasts">
+                <div class="toast toast-level_up">
+                  <span class="toast-icon"><svg><use href="#ic-level_up" /></svg></span>
+                  <div class="toast-copy">
+                    <div class="toast-sys">SYSTEM</div>
+                    <div class="toast-head">Level Up</div>
+                    <div class="toast-body">Pling! Glückwunsch, du Sack Fleisch.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="mock-note">
+          Weitere Pool-Zeilen: EN „Level up. Statistically you're still going to
+          die." / DE „Level up. Statistisch verreckst du trotzdem."
+        </p>
+      </div>
+
+      <!-- ITEM GAINED -->
+      <div class="mock-section">
+        <h2>toast-item_gained</h2>
+        <div class="mock-pair">
+          <div class="mock-lang" data-lang="en">
+            <span class="mock-flag">EN</span>
+            <div class="mock-stage">
+              <div class="toasts">
+                <div class="toast toast-item_gained">
+                  <span class="toast-icon"><svg><use href="#ic-item_gained" /></svg></span>
+                  <div class="toast-copy">
+                    <div class="toast-sys">SYSTEM</div>
+                    <div class="toast-head">Item</div>
+                    <div class="toast-body">You looted a thing. The audience is mildly entertained.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mock-lang" data-lang="de">
+            <span class="mock-flag">DE</span>
+            <div class="mock-stage">
+              <div class="toasts">
+                <div class="toast toast-item_gained">
+                  <span class="toast-icon"><svg><use href="#ic-item_gained" /></svg></span>
+                  <div class="toast-copy">
+                    <div class="toast-sys">SYSTEM</div>
+                    <div class="toast-head">Item</div>
+                    <div class="toast-body">Du hast was abgestaubt. Das Publikum ist mäßig unterhalten.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="mock-note">
+          Weitere Pool-Zeilen: EN „New junk acquired. Try not to sell it for
+          nothing this time." / DE „Neuer Ramsch erbeutet. Verscherbel ihn diesmal
+          nicht für lau."
+        </p>
+      </div>
+
+      <!-- ACHIEVEMENT -->
+      <div class="mock-section">
+        <h2>toast-achievement</h2>
+        <div class="mock-pair">
+          <div class="mock-lang" data-lang="en">
+            <span class="mock-flag">EN</span>
+            <div class="mock-stage">
+              <div class="toasts">
+                <div class="toast toast-achievement">
+                  <span class="toast-icon"><svg><use href="#ic-achievement" /></svg></span>
+                  <div class="toast-copy">
+                    <div class="toast-sys">SYSTEM</div>
+                    <div class="toast-head">Achievement</div>
+                    <div class="toast-body">Achievement unlocked. Nobody's clapping, but the System noticed.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mock-lang" data-lang="de">
+            <span class="mock-flag">DE</span>
+            <div class="mock-stage">
+              <div class="toasts">
+                <div class="toast toast-achievement">
+                  <span class="toast-icon"><svg><use href="#ic-achievement" /></svg></span>
+                  <div class="toast-copy">
+                    <div class="toast-sys">SYSTEM</div>
+                    <div class="toast-head">Achievement</div>
+                    <div class="toast-body">Erfolg freigeschaltet. Keiner klatscht, aber das System hat's gesehen.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="mock-note">
+          Weitere Pool-Zeilen: EN „Achievement earned. Add it to the list of things
+          that won't save you." / DE „Erfolg verdient. Pack ihn zu den Dingen, die
+          dich auch nicht retten."
+        </p>
+      </div>
+
+      <!-- TITLE GAINED -->
+      <div class="mock-section">
+        <h2>toast-title_gained</h2>
+        <div class="mock-pair">
+          <div class="mock-lang" data-lang="en">
+            <span class="mock-flag">EN</span>
+            <div class="mock-stage">
+              <div class="toasts">
+                <div class="toast toast-title_gained">
+                  <span class="toast-icon"><svg><use href="#ic-title_gained" /></svg></span>
+                  <div class="toast-copy">
+                    <div class="toast-sys">SYSTEM</div>
+                    <div class="toast-head">Title</div>
+                    <div class="toast-body">You've got a title now. Fancy. Still expendable.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mock-lang" data-lang="de">
+            <span class="mock-flag">DE</span>
+            <div class="mock-stage">
+              <div class="toasts">
+                <div class="toast toast-title_gained">
+                  <span class="toast-icon"><svg><use href="#ic-title_gained" /></svg></span>
+                  <div class="toast-copy">
+                    <div class="toast-sys">SYSTEM</div>
+                    <div class="toast-head">Title</div>
+                    <div class="toast-body">Du hast jetzt einen Titel. Schick. Trotzdem entbehrlich.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="mock-note">
+          Weitere Pool-Zeilen: EN „New title unlocked. Wear it to your funeral." /
+          DE „Neuer Titel freigeschaltet. Trag ihn zu deiner Beerdigung."
+        </p>
+      </div>
+
+      <!-- SPELL GAINED -->
+      <div class="mock-section">
+        <h2>toast-spell_gained</h2>
+        <div class="mock-pair">
+          <div class="mock-lang" data-lang="en">
+            <span class="mock-flag">EN</span>
+            <div class="mock-stage">
+              <div class="toasts">
+                <div class="toast toast-spell_gained">
+                  <span class="toast-icon"><svg><use href="#ic-spell_gained" /></svg></span>
+                  <div class="toast-copy">
+                    <div class="toast-sys">SYSTEM</div>
+                    <div class="toast-head">Spell</div>
+                    <div class="toast-body">New spell learned. Try not to fireball yourself.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mock-lang" data-lang="de">
+            <span class="mock-flag">DE</span>
+            <div class="mock-stage">
+              <div class="toasts">
+                <div class="toast toast-spell_gained">
+                  <span class="toast-icon"><svg><use href="#ic-spell_gained" /></svg></span>
+                  <div class="toast-copy">
+                    <div class="toast-sys">SYSTEM</div>
+                    <div class="toast-head">Spell</div>
+                    <div class="toast-body">Neuer Zauber gelernt. Feuerball dich nicht selbst ab.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="mock-note">
+          Weitere Pool-Zeilen: EN „Spell acquired. The System expects a hilarious
+          accident." / DE „Zauber erlernt. Das System rechnet mit einem urkomischen
+          Unfall."
+        </p>
+      </div>
+
+      <!-- FLOOR CHANGE -->
+      <div class="mock-section">
+        <h2>toast-floor_change</h2>
+        <div class="mock-pair">
+          <div class="mock-lang" data-lang="en">
+            <span class="mock-flag">EN</span>
+            <div class="mock-stage">
+              <div class="toasts">
+                <div class="toast toast-floor_change">
+                  <span class="toast-icon"><svg><use href="#ic-floor_change" /></svg></span>
+                  <div class="toast-copy">
+                    <div class="toast-sys">SYSTEM</div>
+                    <div class="toast-head">New Floor</div>
+                    <div class="toast-body">New floor. Fresh ways to die await.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mock-lang" data-lang="de">
+            <span class="mock-flag">DE</span>
+            <div class="mock-stage">
+              <div class="toasts">
+                <div class="toast toast-floor_change">
+                  <span class="toast-icon"><svg><use href="#ic-floor_change" /></svg></span>
+                  <div class="toast-copy">
+                    <div class="toast-sys">SYSTEM</div>
+                    <div class="toast-head">New Floor</div>
+                    <div class="toast-body">Neue Etage. Frische Wege zu verrecken warten schon.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="mock-note">
+          Weitere Pool-Zeilen: EN „Descending. The gods are watching. And betting
+          against you." / DE „Es geht abwärts. Die Götter schauen zu. Und wetten
+          gegen dich."
+        </p>
+      </div>
+
+      <!-- Stack: mehrere Toasts wie im echten Betrieb -->
+      <div class="mock-section">
+        <h2>Stapel (wie im Betrieb)</h2>
+        <div class="mock-stage">
+          <div class="toasts">
+            <div class="toast toast-level_up">
+              <span class="toast-icon"><svg><use href="#ic-level_up" /></svg></span>
+              <div class="toast-copy">
+                <div class="toast-sys">SYSTEM</div>
+                <div class="toast-head">Level Up</div>
+                <div class="toast-body">Level up. The bar was on the floor, but well done.</div>
+              </div>
+            </div>
+            <div class="toast toast-item_gained">
+              <span class="toast-icon"><svg><use href="#ic-item_gained" /></svg></span>
+              <div class="toast-copy">
+                <div class="toast-sys">SYSTEM</div>
+                <div class="toast-head">Item</div>
+                <div class="toast-body">You looted a thing. The audience is mildly entertained.</div>
+              </div>
+            </div>
+            <div class="toast toast-spell_gained">
+              <span class="toast-icon"><svg><use href="#ic-spell_gained" /></svg></span>
+              <div class="toast-copy">
+                <div class="toast-sys">SYSTEM</div>
+                <div class="toast-head">Spell</div>
+                <div class="toast-body">New spell learned. Try not to fireball yourself.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
