@@ -933,23 +933,140 @@ h3 {
   max-width: min(340px, 86vw);
 }
 
-.toast {
+/* ═══════════════════════════════════════════════════════════════════════
+   System announcer identity (WP-7)
+
+   Portiert (kopiert) aus dem Shared Contract in mockups/flavor.css. Das
+   "System" ist eine fremde, spöttische Spielleiter-Stimme, die sich über die
+   Blacklight-Oberfläche legt. Ihr Erkennungszeichen ist ein monospaces,
+   neonblaues "[ SYSTEM ]"-Label (var(--blue), var(--data)) mit Klammern und
+   blinkendem Caret. Die bandtypische Neonfarbe bleibt pro Ereignis erhalten
+   (Toast-Kind-Farbe an der linken Schiene). Nutzt ausschließlich vorhandene
+   Theme-Variablen (--book-1..8, --blue, --crimson, --amber, Raritätsfarben)
+   und Inline-SVG — keine externen/Raster-Assets. Neue Animationen sind unten
+   im bestehenden @media (prefers-reduced-motion: reduce)-Block stillgelegt.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* --------------------------------------------------------- Kern: SYSTEM-Tag */
+
+/* Das "[ SYSTEM ]"-Chip — die wiederkehrende Identität auf allen Flächen. */
+.system-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-family: var(--data);
+  font-weight: 700;
+  font-size: 0.66rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--blue);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--blue) 55%, transparent);
+}
+
+/* Neon-Klammern rahmen das Wort wie einen Terminal-Prompt. */
+.system-tag::before {
+  content: "[";
+  color: color-mix(in srgb, var(--blue) 70%, var(--ink-3));
+}
+.system-tag::after {
+  content: "]";
+  color: color-mix(in srgb, var(--blue) 70%, var(--ink-3));
+}
+
+/* Blinkender Terminal-Caret hinter dem Wort (nur in der --caret-Variante). */
+.system-tag--caret .system-caret {
+  width: 0.5em;
+  height: 1em;
+  margin-left: -0.1em;
+  background: var(--blue);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--blue) 60%, transparent);
+  animation: systemblink 1.1s steps(1) infinite;
+}
+
+@keyframes systemblink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ------------------------------------------------------------- System-Banner */
+
+/* Eigenständige Sprecher-Leiste. Jetzt gebaut, Inhalt erst Phase 2 —
+   deshalb bewusst zurückhaltend, als schmaler Overlay-Streifen. */
+.system-banner {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-  background: var(--card);
-  border: 1px solid var(--rule-strong);
-  border-left: 5px solid var(--amber);
+  gap: 0.9rem;
+  max-width: 1220px;
+  margin: 0 auto;
+  padding: 0.6rem 1rem;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--blue) 14%, var(--card)),
+    var(--card) 60%
+  );
+  border: 1px solid color-mix(in srgb, var(--blue) 45%, var(--rule-strong));
+  border-left: 4px solid var(--blue);
   border-radius: 3px;
-  padding: 0.6rem 0.9rem 0.6rem 0.7rem;
   box-shadow:
-    0 0 18px rgba(255, 198, 10, 0.2),
-    0 10px 26px rgba(0, 0, 0, 0.55);
+    0 0 16px color-mix(in srgb, var(--blue) 22%, transparent),
+    inset 0 0 30px rgba(0, 0, 0, 0.4);
+}
+
+.system-banner .system-tag {
+  flex-shrink: 0;
+}
+
+.system-banner-body {
+  font-family: var(--body);
+  font-size: 0.9rem;
+  color: var(--ink);
+  line-height: 1.35;
+}
+
+/* ------------------------------------------------ Toast als System-Meldung */
+
+/* Jeder Toast wird eine "System-Benachrichtigung": monospacer SYSTEM-Header,
+   glühende kind-farbige Schiene links, darunter Kind-Label + Flavor-Zeile.
+   --kind trägt die Ereignisfarbe; die Kind-Klassen setzen nur diese Variable.
+   Löst die frühere .toast-Optik ab, behält aber die Ein-/Ausblend-Animation
+   (toastin/toastout) des Themes. */
+.toast {
+  --kind: var(--amber);
   --d: 0ms;
+  display: flex;
+  align-items: stretch;
+  gap: 0.7rem;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--blue) 6%, var(--card)),
+    var(--card)
+  );
+  border: 1px solid var(--rule-strong);
+  border-left: none; /* Schiene übernimmt ::before */
+  border-radius: 3px;
+  padding: 0.6rem 0.9rem 0.6rem 1rem;
+  box-shadow:
+    0 0 18px color-mix(in srgb, var(--kind) 22%, transparent),
+    0 10px 26px rgba(0, 0, 0, 0.55);
   animation:
     toastin 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2) backwards,
     toastout 0.4s ease-in forwards;
   animation-delay: var(--d), calc(2.9s + var(--d));
+}
+
+/* Glühende Ereignis-Schiene links — ersetzt das border-left des Themes. */
+.toast::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 5px;
+  background: var(--kind);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--kind) 70%, transparent);
 }
 
 @keyframes toastin {
@@ -971,47 +1088,201 @@ h3 {
 }
 
 .toast-icon {
-  color: var(--ink);
+  align-self: center;
+  color: var(--kind);
   display: grid;
   place-items: center;
   flex-shrink: 0;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--kind) 55%, transparent));
 }
 
+.toast-icon svg {
+  width: 26px;
+  height: 26px;
+  display: block;
+}
+
+.toast-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+/* Monospacer SYSTEM-Header — das Erkennungszeichen der Stimme. */
+.toast-sys {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--data);
+  font-weight: 700;
+  font-size: 0.56rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--blue);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--blue) 50%, transparent);
+}
+
+.toast-sys::before {
+  content: "▎";
+  color: var(--blue);
+  opacity: 0.8;
+}
+
+/* Kind-Label ("LEVEL UP", "ITEM") in der Ereignisfarbe. */
 .toast-head {
   font-family: var(--data);
   font-weight: 700;
   font-size: 0.66rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--amber-deep);
+  color: var(--kind);
 }
 
+/* Die eigentliche spöttische Flavor-Zeile. */
 .toast-body {
+  font-family: var(--body);
   font-size: 0.85rem;
   color: var(--ink);
   line-height: 1.3;
 }
 
+/* Pro Kind nur die Ereignisfarbe setzen — alles andere erbt. */
 .toast-level_up {
-  border-left-color: var(--crimson);
-  box-shadow:
-    0 0 18px rgba(255, 46, 204, 0.25),
-    0 10px 26px rgba(0, 0, 0, 0.55);
+  --kind: var(--crimson);
 }
-
-.toast-level_up .toast-head {
-  color: var(--crimson);
-}
-
 .toast-item_gained {
-  border-left-color: var(--r-epic);
-  box-shadow:
-    0 0 18px rgba(200, 107, 255, 0.25),
-    0 10px 26px rgba(0, 0, 0, 0.55);
+  --kind: var(--r-epic);
+}
+.toast-achievement {
+  --kind: var(--amber);
+}
+.toast-title_gained {
+  --kind: var(--r-unique);
+}
+.toast-spell_gained {
+  --kind: var(--r-rare);
+}
+.toast-floor_change {
+  --kind: var(--acid);
 }
 
-.toast-item_gained .toast-head {
-  color: var(--r-epic);
+/* --------------------------------------------------------------- Loader */
+
+/* Der Loader spricht jetzt: SYSTEM-Tag oben, darunter die rotierende Zeile.
+   .loading behält Pulsieren + Zentrierung aus dem Theme; wir stapeln vertikal. */
+.loading.system-loading {
+  flex-direction: column;
+  gap: 1rem;
+  text-align: center;
+  padding: 2rem 1.2rem;
+  animation: none; /* Puls wandert auf die Textzeile, Tag bleibt ruhig */
+}
+
+.system-loading .system-loader-line {
+  font-family: var(--display);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-2);
+  font-size: 1.2rem;
+  max-width: 30ch;
+  line-height: 1.25;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+/* ------------------------------------------------------- Spoiler-Schleuse */
+
+/* Die Schleuse bekommt einen SYSTEM-Kopf über der Frage — der Sprecher
+   verhört den Leser, wie weit er im Crawl steckt. */
+.gate-card.system-gate {
+  border-color: var(--blue);
+  box-shadow:
+    0 0 28px color-mix(in srgb, var(--blue) 22%, transparent),
+    0 18px 44px rgba(0, 0, 0, 0.6);
+}
+
+.system-gate .system-gate-head {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.3rem;
+}
+
+/* Die spöttische Sprecher-Zeile unter der eigentlichen Frage. */
+.system-gate .system-gate-line {
+  font-family: var(--body);
+  color: var(--ink-2);
+  font-size: 0.9rem;
+  line-height: 1.45;
+  margin: 0.6rem auto 0;
+  max-width: 42ch;
+}
+
+/* ----------------------------------------------------------- leere Flächen */
+
+/* Leerer Ausrüstungs-Slot / leeres Inventar mit spöttischer Zeile.
+   .slot.empty existiert im Theme; wir hängen die System-Stimme an. */
+.slot.empty.system-empty {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.system-empty .system-empty-tag {
+  font-family: var(--data);
+  font-weight: 700;
+  font-size: 0.54rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--blue) 70%, var(--ink-4));
+}
+
+.system-empty .system-empty-line {
+  font-family: var(--body);
+  font-style: italic;
+  font-size: 0.8rem;
+  color: var(--ink-3);
+  line-height: 1.35;
+}
+
+/* Freistehender Leerzustand (Suche/Inventar-Panel), größer als ein Slot. */
+.system-empty-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+  text-align: center;
+  padding: 1.8rem 1.2rem;
+  background: var(--inset);
+  border: 1px dashed var(--rule-strong);
+  border-radius: 4px;
+  color: var(--ink-3);
+}
+
+.system-empty-block .system-empty-line {
+  font-size: 0.9rem;
+  max-width: 34ch;
+}
+
+/* ---------------------------------------------------------------- Footer */
+
+/* Die Fußnote spricht im Sprecher-Ton, behält aber ihre dezente Größe. */
+.footer-note.system-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.system-footer .system-footer-line {
+  color: var(--ink-3);
+  font-size: 0.72rem;
+  line-height: 1.55;
+  max-width: 64ch;
+}
+
+.system-footer .system-tag {
+  font-size: 0.56rem;
 }
 
 /* ------------------------------------------------ timeline: die Sendeleiste
@@ -1639,5 +1910,11 @@ h3 {
   *:after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+
+  /* Neue System-Animationen zusätzlich explizit stilllegen (WP-7). */
+  .system-tag--caret .system-caret,
+  .system-loading .system-loader-line {
+    animation: none;
   }
 }
