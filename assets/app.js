@@ -9210,6 +9210,8 @@ function St({ card: s, children: m, className: a, style: C }) {
     : f.jsx("div", { className: a, style: C, children: m });
 }
 function Tc({ stat: s, value: m, source: a, bonus: C, changed: x }) {
+  // Per-load: pinned random "not yet revealed" barb for an unrevealed stat.
+  const inv = useFlavorLine("empty_inventory", "Not yet revealed in the story", {});
   const { effective: g, delta: S } = wc(m, C),
     M = ia(g ?? m),
     O = [];
@@ -9228,7 +9230,7 @@ function Tc({ stat: s, value: m, source: a, bonus: C, changed: x }) {
       name: Fo(s),
       typeLine:
         m == null
-          ? "Not yet revealed in the story"
+          ? f.jsx(Flavor, { text: inv })
           : S !== 0
             ? `${g} total · ${m} base ${S > 0 ? "+" : ""}${S} from gear`
             : `Base score ${m}`,
@@ -9763,6 +9765,8 @@ function Oc({
       );
     }, [s]),
     w = J.useMemo(() => s.map((B, p) => ({ ...B, i: p })).filter((B) => B.floorStart), [s]);
+  // Per-load: pinned random footer barb; the legal note below it stays intact.
+  const footerLine = useFlavorLine("footer", "Goddammit, Donut.", { cap: M });
   return f.jsx("div", {
     className: "timeline",
     children: f.jsxs("div", {
@@ -9854,18 +9858,25 @@ function Oc({
           ],
         }),
         f.jsxs("div", {
-          className: "footer-note",
+          className: "footer-note system-footer",
           children: [
-            "Unofficial fan project for the ",
-            f.jsx("em", { children: "Dungeon Crawler Carl" }),
-            " series by Matt Dinniman. All item names and characters belong to their creator — go read the books! Data is paraphrased from the text; spoilers only appear up to your slider position. Icons by ",
-            f.jsx("a", {
-              href: "https://game-icons.net",
-              target: "_blank",
-              rel: "noreferrer",
-              children: "game-icons.net",
-            }),
-            " (CC BY 3.0).",
+            f.jsx("span", { className: "system-tag", children: f.jsx(Flavor, { text: "SYSTEM" }) }, "sys"),
+            footerLine && f.jsx("span", { className: "system-footer-line", children: f.jsx(Flavor, { text: footerLine }) }, "flavor"),
+            f.jsxs("span", {
+              className: "system-footer-line",
+              children: [
+                "Unofficial fan project for the ",
+                f.jsx("em", { children: "Dungeon Crawler Carl" }),
+                " series by Matt Dinniman. All item names and characters belong to their creator — go read the books! Data is paraphrased from the text; spoilers only appear up to your slider position. Icons by ",
+                f.jsx("a", {
+                  href: "https://game-icons.net",
+                  target: "_blank",
+                  rel: "noreferrer",
+                  children: "game-icons.net",
+                }),
+                " (CC BY 3.0).",
+              ],
+            }, "legal"),
           ],
         }),
       ],
@@ -9936,6 +9947,43 @@ const toastIconMap = {
   spell_gained: "spell",
   floor_change: "level_up",
 };
+// ── Flavor consumption (WP-6) ─────────────────────────────────────────────
+// Reads the "System"-announcer pools via window.__flavor (embedded inline in
+// both builds). Never throws: without the runtime it returns the surface's
+// hard-coded English fallback, so every surface degrades gracefully.
+function pickFlavor(surface, opts) {
+  opts = opts || {};
+  const api = window.__flavor,
+    lang = window.__i18n ? window.__i18n.lang : void 0;
+  if (!api || typeof api.pick !== "function") return opts.fallback != null ? opts.fallback : "";
+  return api.pick(surface, {
+    lang,
+    cap: opts.cap,
+    seedKey: opts.seedKey,
+    fallback: opts.fallback,
+  });
+}
+// Renders flavor / the "SYSTEM" tag as text while bypassing the i18n jsx-factory.
+// window.__i18n.wrapJsx only translates *host-element* string children; routing
+// this text through a component (a non-host type) + Fragment keeps it out of the
+// translation pass entirely. That is exactly what we want: flavor is already
+// self-bilingual via window.__flavor and "SYSTEM" is language-neutral, so neither
+// should be re-translated or recorded as an __i18n miss.
+function Flavor({ text: s }) {
+  return s ? f.jsx(f.Fragment, { children: s }) : null;
+}
+// Per-load surfaces (loader, gate, footer, empty states): draw a random pool
+// index once at mount, pin it via useRef, and re-pass it as seedKey on every
+// render so a language toggle re-renders the SAME line translated (no reshuffle).
+function useFlavorLine(surface, fallback, opts) {
+  const seed = J.useRef(null);
+  if (seed.current == null) seed.current = Math.random().toString(36).slice(2, 10);
+  return pickFlavor(surface, {
+    cap: opts && opts.cap,
+    seedKey: seed.current,
+    fallback,
+  });
+}
 function Ic(s, m, a) {
   const C = [];
   for (const g of s.events)
@@ -9974,7 +10022,7 @@ function Ic(s, m, a) {
   return C.filter((g) => !x.has(g.body) && x.add(g.body)).slice(0, 4);
 }
 let $c = 1;
-function ToastStack({ queue: s }) {
+function ToastStack({ queue: s, cap: ca }) {
   const [m, a] = J.useState([]),
     C = J.useRef([]);
   return (
@@ -9992,8 +10040,15 @@ function ToastStack({ queue: s }) {
       className: "toasts",
       role: "status",
       "aria-live": "polite",
-      children: m.map((x) =>
-        f.jsxs(
+      children: m.map((x) => {
+        // Per-event surface: deterministic seedKey derived from the event, so the
+        // same event always yields the same line — including after a language toggle.
+        const flavor = pickFlavor(`toast.${x.kind}`, {
+          cap: ca,
+          seedKey: `${x.kind}|${x.body || x.id}`,
+          fallback: "",
+        });
+        return f.jsxs(
           "div",
           {
             className: `toast toast-${x.kind}`,
@@ -10004,31 +10059,49 @@ function ToastStack({ queue: s }) {
                 children: f.jsx(Icon, { name: toastIconMap[x.kind] || "achievement", size: 22 }),
               }),
               f.jsxs("div", {
+                className: "toast-copy",
                 children: [
+                  f.jsx("div", { className: "toast-sys", children: f.jsx(Flavor, { text: "SYSTEM" }) }),
                   f.jsx("div", { className: "toast-head", children: x.head }),
-                  f.jsx("div", { className: "toast-body", children: x.body }),
+                  x.body && f.jsx("div", { className: "toast-body", children: x.body }),
+                  flavor &&
+                    f.jsx("div", {
+                      className: "toast-body",
+                      style: { fontStyle: "italic", opacity: 0.85 },
+                      children: f.jsx(Flavor, { text: flavor }),
+                    }),
                 ],
               }),
             ],
           },
           x.id,
-        ),
-      ),
+        );
+      }),
     })
   );
 }
 function SpoilerGate({ books: s, onPick: m }) {
+  // Per-load: pinned random line, re-rendered translated on a language toggle.
+  const flavor = useFlavorLine("gate", "", {});
   return f.jsx("div", {
     className: "gate",
     children: f.jsxs("div", {
-      className: "gate-card",
+      className: "gate-card system-gate",
       children: [
+        f.jsx("div", {
+          className: "system-gate-head",
+          children: f.jsxs("span", {
+            className: "system-tag system-tag--caret",
+            children: [f.jsx(Flavor, { text: "SYSTEM" }, "s"), f.jsx("span", { className: "system-caret" }, "c")],
+          }),
+        }),
         f.jsx("h1", { children: "Dungeon Crawler Carl" }),
         f.jsx("div", {
           className: "gate-sub",
           children: "Interactive character sheets for Carl & Princess Donut",
         }),
         f.jsx("div", { className: "gate-question", children: "How far into the crawl are you?" }),
+        flavor && f.jsx("p", { className: "system-gate-line", children: f.jsx(Flavor, { text: flavor }) }),
         f.jsx("div", {
           className: "gate-hint",
           children:
@@ -10157,6 +10230,8 @@ function Hc({ db: s, bookCap: m, timeline: a, onTravel: C, onClose: x }) {
         H.slice(0, 24).map(([, re]) => re)
       );
     }, [F, g]);
+  // Per-load: pinned random "no results" barb (the factual detail is kept below it).
+  const emptyLine = useFlavorLine("empty_search", "", { cap: m });
   (J.useEffect(() => {
     O(0);
   }, [g]),
@@ -10216,16 +10291,25 @@ function Hc({ db: s, bookCap: m, timeline: a, onTravel: C, onClose: x }) {
             ref: K,
             children: [
               w.length === 0 &&
-                f.jsxs("div", {
-                  className: "palette-empty",
-                  children: [
-                    "Nothing in the first ",
-                    m === 1 ? "book" : `${m} books`,
-                    " matches “",
-                    g,
-                    "”.",
-                  ],
-                }),
+                (() => {
+                  const detail = `Nothing in the first ${m === 1 ? "book" : `${m} books`} matches “${g}”.`;
+                  return f.jsxs("div", {
+                    className: "palette-empty system-empty-block",
+                    children: [
+                      f.jsx("span", { className: "system-tag", children: f.jsx(Flavor, { text: "SYSTEM" }) }, "sys"),
+                      f.jsx("span", {
+                        className: "system-empty-line",
+                        children: emptyLine ? f.jsx(Flavor, { text: emptyLine }) : detail,
+                      }, "line"),
+                      emptyLine &&
+                        f.jsx("span", {
+                          className: "system-empty-line",
+                          style: { opacity: 0.7, fontSize: "0.8rem" },
+                          children: detail,
+                        }, "detail"),
+                    ],
+                  });
+                })(),
               w.map((z, H) => {
                 const re = z.group !== _ ? ((_ = z.group), !0) : !1,
                   ne = a[V.get(`${z.book}:${z.chapter}`)];
@@ -10300,6 +10384,18 @@ function App() {
       return Number.isInteger(Z) && Z >= 1 && Z <= 8 ? Z : null;
     }),
     B = J.useRef(0);
+  // Per-load: pinned random loader line (translated in place on a language toggle).
+  const loaderLine = useFlavorLine("loader", "Entering the dungeon…", { cap: V });
+  const systemLoader = f.jsxs("div", {
+    className: "loading system-loading",
+    children: [
+      f.jsxs("span", {
+        className: "system-tag system-tag--caret",
+        children: [f.jsx(Flavor, { text: "SYSTEM" }, "s"), f.jsx("span", { className: "system-caret" }, "c")],
+      }),
+      f.jsx("span", { className: "system-loader-line", children: f.jsx(Flavor, { text: loaderLine }) }),
+    ],
+  });
   J.useEffect(() => {
     fetch("/data/series.json")
       .then((Z) => (Z.ok ? Z.json() : Promise.reject(new Error(`HTTP ${Z.status}`))))
@@ -10394,17 +10490,17 @@ function App() {
       return le;
     }, [s, p, x]);
   if (a) return f.jsxs("div", { className: "loading", children: ["Failed to load data: ", a] });
-  if (!s) return f.jsx("div", { className: "loading", children: "Entering the dungeon…" });
+  if (!s) return systemLoader;
   if (V == null)
     return f.jsxs(f.Fragment, {
       children: [f.jsx(J1, {}), f.jsx(SpoilerGate, { books: s.meta.books, onPick: z })],
     });
-  if (!H) return f.jsx("div", { className: "loading", children: "Entering the dungeon…" });
+  if (!H) return systemLoader;
   const re = Math.min(x, p.length - 1);
   return f.jsxs(Cc, {
     children: [
       f.jsx(J1, {}),
-      f.jsx(ToastStack, { queue: O }),
+      f.jsx(ToastStack, { queue: O, cap: V }),
       f.jsxs("header", {
         className: "site-header",
         children: [
