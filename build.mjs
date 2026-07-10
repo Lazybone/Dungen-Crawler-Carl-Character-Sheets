@@ -24,43 +24,42 @@ const hash = (s) => createHash("sha256").update(s).digest("hex").slice(0, 8);
 const escapeJson = (s) => s.replace(/</g, "\\u003c");
 const minifyJson = (s) => JSON.stringify(JSON.parse(s));
 
-const [fonts, css, jsRaw, seriesRaw, dictRaw, i18nRuntime, boot] = await Promise.all([
-  read("assets/fonts.css"),
-  read("assets/theme.css"),
-  read("assets/index-B_LsmJIL.js"),
-  read("data/series.json"),
-  read("data/i18n.de.json"),
-  read("assets/i18n-runtime.js"),
-  read("assets/boot.js"),
-]);
+const [fonts, css, js, seriesRaw, dictRaw, i18nRuntime, flavorRuntime, boot, flavorRaw] =
+  await Promise.all([
+    read("assets/fonts.css"),
+    read("assets/theme.css"),
+    read("assets/app.js"),
+    read("data/series.json"),
+    read("data/i18n.de.json"),
+    read("assets/i18n-runtime.js"),
+    read("assets/flavor-runtime.js"),
+    read("assets/boot.js"),
+    read("data/flavor.json"),
+  ]);
 
 const series = minifyJson(seriesRaw);
 const dict = minifyJson(dictRaw);
+const flavor = minifyJson(flavorRaw);
 
-// Zwei chirurgische Eingriffe ins minifizierte Bundle. Beide werden geprüft:
-// ändert sich das Bundle, scheitert der Build, statt still Englisch zu bleiben.
-const patch = (src, needle, replacement, what) => {
+// Die beiden i18n-Haken leben jetzt fest in assets/app.js, nicht mehr als
+// String-Chirurgie zur Build-Zeit. Wo früher patch() genau einen Treffer
+// erzwang, sichert hier ein harter Quell-Assert dieselbe Invariante: fehlt oder
+// verdoppelt sich einer der Aufrufe, bricht der Build ab, statt still Englisch
+// zu bleiben oder den Root doppelt zu mounten.
+const assertOnce = (src, needle, what) => {
   const hits = src.split(needle).length - 1;
-  if (hits !== 1) throw new Error(`Patch "${what}": ${hits} Treffer, erwartet genau 1`);
-  return src.replace(needle, replacement);
+  if (hits !== 1) {
+    throw new Error(`Quell-Assert "${what}": ${hits} Treffer in assets/app.js, erwartet genau 1`);
+  }
 };
 
-// 1. Die JSX-Fabrik. `Sr.jsx` und `Sr.jsxs` zeigen auf dieselbe Funktion, und
-//    `f` ist die einzige Bindung darauf — jeder gerenderte Textknoten läuft
-//    also durch __i18n.wrapJsx. Deshalb muss keine einzelne Textstelle im
-//    Bundle angefasst werden.
-let js = patch(jsRaw, "var f=oc()", "var f=window.__i18n.wrapJsx(oc())", "jsx-Fabrik");
+// 1. Die JSX-Fabrik läuft durch __i18n.wrapJsx — jeder gerenderte Textknoten
+//    wird übersetzt, ohne dass eine einzelne Textstelle angefasst werden muss.
+assertOnce(js, "window.__i18n.wrapJsx(", "jsx-Fabrik");
 
-// 2. Der Root-Render. Der Root bleibt erhalten, damit ein Sprachwechsel neu
-//    rendert statt neu zu mounten: die Komponenten laufen erneut durch die
-//    Fabrik, der React-State (Kapitelposition, Buchgrenze) überlebt.
-js = patch(
-  js,
-  'dc.createRoot(document.getElementById("root")).render(f.jsx(Uo.StrictMode,{children:f.jsx(Wc,{})}));',
-  'window.__i18n.mount(dc.createRoot(document.getElementById("root")),' +
-    "function(lang){return f.jsx(Uo.StrictMode,{children:f.jsx(Wc,{__lang:lang})})});",
-  "Root-Render",
-);
+// 2. Der Root-Render läuft über __i18n.mount, damit ein Sprachwechsel neu
+//    rendert statt neu zu mounten und der React-State überlebt.
+assertOnce(js, "window.__i18n.mount(", "Root-Render");
 
 const langToggleCss = `      .lang-toggle {
         position: fixed;
@@ -145,6 +144,12 @@ ${escapeJson(series)}
 ${escapeJson(dict)}
     </script>
 
+    <!-- Flavor-Pools. Muss vor flavor-runtime.js stehen: die Laufzeit liest
+         diesen Block synchron über getElementById. -->
+    <script type="application/json" id="flavor-data">
+${escapeJson(flavor)}
+    </script>
+
     <script>
 ${seriesFromPage}
     </script>
@@ -157,6 +162,12 @@ ${boot}
          Auswerten auf window.__i18n zu. -->
     <script>
 ${i18nRuntime}
+    </script>
+
+    <!-- Flavor-Schicht. Nach der Sprachschicht (liest window.__i18n.lang) und
+         dem #flavor-data-Block, vor dem Bundle. -->
+    <script>
+${flavorRuntime}
     </script>
 
     <!-- Original ein type="module"-Bundle: Strict-Mode und eigener Scope
@@ -211,14 +222,22 @@ const distBoot = `${seriesOverHttp}\n${boot}`;
 const cssName = `app-${hash(distCss)}.css`;
 const bootName = `boot-${hash(distBoot)}.js`;
 const i18nName = `i18n-runtime-${hash(i18nRuntime)}.js`;
+const flavorName = `flavor-runtime-${hash(flavorRuntime)}.js`;
 const bundleName = `index-${hash(js)}.js`;
 
 // boot.js und die Sprachschicht sind klassische Skripte und laufen sofort; das
 // Bundle ist ein Modul und damit ohnehin aufgeschoben. Die Reihenfolge stimmt
 // also: window.__i18n steht, bevor das Bundle ausgewertet wird.
+// flavor.json reist als Inline-Block mit — data-Dateien werden ohnehin nicht
+// gehasht, und die App braucht die Pools in beiden Sprachen ab dem ersten
+// Paint. Der Block muss vor flavor-runtime.js stehen (synchrones getElementById).
 const distHtml = `${head(`    <link rel="stylesheet" href="assets/${cssName}" />`)}
+    <script type="application/json" id="flavor-data">
+${escapeJson(flavor)}
+    </script>
     <script src="assets/${bootName}"></script>
     <script src="assets/${i18nName}"></script>
+    <script src="assets/${flavorName}"></script>
     <script type="module" src="assets/${bundleName}"></script>
   </body>
 </html>
@@ -234,6 +253,7 @@ await Promise.all([
   writeFile(join(dist, "assets", cssName), distCss),
   writeFile(join(dist, "assets", bootName), distBoot),
   writeFile(join(dist, "assets", i18nName), i18nRuntime),
+  writeFile(join(dist, "assets", flavorName), flavorRuntime),
   writeFile(join(dist, "assets", bundleName), js),
   writeFile(join(dist, "data", "series.json"), series),
   writeFile(join(dist, "data", "i18n.de.json"), dict),
@@ -241,8 +261,16 @@ await Promise.all([
 ]);
 
 // Was ein englischer Erstbesuch tatsächlich zieht: alles ausser dem Wörterbuch.
+// Die Flavor-Pools reisen inline in distHtml.length mit; flavor-runtime.js zählt
+// als eigenes Eager-Skript dazu.
 const eager =
-  distHtml.length + distCss.length + distBoot.length + i18nRuntime.length + js.length + series.length;
+  distHtml.length +
+  distCss.length +
+  distBoot.length +
+  i18nRuntime.length +
+  flavorRuntime.length +
+  js.length +
+  series.length;
 console.log(
   `dist/ geschrieben (${fontFiles.length} Schriften, ` +
     `Erstbesuch auf Englisch ≈ ${(eager / 1024 / 1024).toFixed(2)} MB ` +
