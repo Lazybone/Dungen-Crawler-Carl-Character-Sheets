@@ -34,6 +34,8 @@ jobs:
       # Pflicht-Rauchtest: sichert die Invarianten des entfernten patch()-Wächters
       # ab (ebenfalls abhängigkeitsfrei, kein npm install).
       - run: node tools/smoke-build.mjs
+      # Verhaltenstests der Flavor-Laufzeit (ebenfalls abhängigkeitsfrei).
+      - run: node tools/tests/flavor-runtime.test.mjs
 
       - uses: actions/configure-pages@v5
 

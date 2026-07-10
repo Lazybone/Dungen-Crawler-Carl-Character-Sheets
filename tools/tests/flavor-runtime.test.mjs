@@ -180,14 +180,23 @@ test("cap 1 schließt minBook>1-Einträge aus (achievement 3, floor_change 5)", 
     { surface: "toast.floor_change", minBook: 5 },
   ];
   for (const { surface, minBook } of cases) {
-    const gated = poolOf(surface).find((e) => e.minBook === minBook);
+    const pool = poolOf(surface);
+    const gated = pool.find((e) => e.minBook === minBook);
     assert.ok(gated, `${surface}: kein Eintrag mit minBook ${minBook} in den echten Daten`);
-    const seen = new Set();
-    for (let i = 0; i < 200; i++) seen.add(flavor.pick(surface, { seedKey: String(i), cap: 1 }));
-    assert.ok(
-      !seen.has(gated.en),
-      `${surface}: minBook-${minBook}-Eintrag trotz cap 1 gezogen`,
-    );
+    // Indexbasiert statt en-String-Set: pick(cap 1) muss für jeden Seed exakt
+    // den Eintrag des GEFILTERTEN Pools liefern — unabhängig von Textdubletten
+    // oder künftigem Datenwachstum.
+    const filtered = pool.filter((e) => !(e.minBook > 1));
+    assert.ok(filtered.length < pool.length, `${surface}: cap 1 filtert nichts — Testdaten unbrauchbar`);
+    for (let i = 0; i < 200; i++) {
+      const seedKey = String(i);
+      const expected = filtered[hash(seedKey) % filtered.length].en;
+      assert.equal(
+        flavor.pick(surface, { seedKey, cap: 1 }),
+        expected,
+        `${surface}: cap-1-Auswahl weicht bei Seed ${seedKey} vom gefilterten Pool ab`,
+      );
+    }
   }
 });
 
@@ -198,12 +207,20 @@ test("cap 8 schließt die minBook-Einträge ein", () => {
     { surface: "toast.floor_change", minBook: 5 },
   ];
   for (const { surface, minBook } of cases) {
-    const gated = poolOf(surface).find((e) => e.minBook === minBook);
-    const seen = new Set();
-    for (let i = 0; i < 200; i++) seen.add(flavor.pick(surface, { seedKey: String(i), cap: 8 }));
-    assert.ok(
-      seen.has(gated.en),
-      `${surface}: minBook-${minBook}-Eintrag bei cap 8 nie gezogen`,
+    const pool = poolOf(surface);
+    const gated = pool.find((e) => e.minBook === minBook);
+    const gatedIdx = pool.indexOf(gated);
+    // Gezielt einen Seed berechnen, der auf den gated-Index abbildet — kein
+    // Hoffen auf Zufallstreffer in N Versuchen (wachstumsfest).
+    let seedKey = null;
+    for (let i = 0; i < 100000; i++) {
+      if (hash(String(i)) % pool.length === gatedIdx) { seedKey = String(i); break; }
+    }
+    assert.ok(seedKey !== null, `${surface}: kein Seed für Index ${gatedIdx} gefunden`);
+    assert.equal(
+      flavor.pick(surface, { seedKey, cap: 8 }),
+      gated.en,
+      `${surface}: minBook-${minBook}-Eintrag bei cap 8 nicht gezogen`,
     );
   }
 });
