@@ -31,6 +31,10 @@ jobs:
       # build.mjs kommt ohne Abhängigkeiten aus, daher kein npm install.
       - run: node build.mjs
 
+      # Pflicht-Rauchtest: sichert die Invarianten des entfernten patch()-Wächters
+      # ab (ebenfalls abhängigkeitsfrei, kein npm install).
+      - run: node tools/smoke-build.mjs
+
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3
