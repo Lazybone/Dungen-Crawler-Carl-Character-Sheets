@@ -1,0 +1,195 @@
+/* =========================================================================
+   Mockup-Layout-Hilfen (.mock-*) — NUR fuer die mockups/*.html Galerie.
+   Nicht Teil des Shared Contracts, wird NIE nach theme.css portiert.
+   Ausgelagert aus der geloeschten mockups/flavor.css (WP-7 Follow-up).
+   ========================================================================= */
+
+.mock-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2.4rem 1.4rem 5rem;
+}
+
+.mock-title {
+  font-family: var(--display);
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--amber);
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  transform: rotate(-1deg);
+  text-shadow:
+    0 0 16px rgba(255, 198, 10, 0.4),
+    2px 2px 0 #7a1f8f;
+  margin: 0 0 0.3rem;
+}
+
+.mock-lead {
+  color: var(--ink-3);
+  font-size: 0.9rem;
+  margin: 0 0 2rem;
+  max-width: 60ch;
+  line-height: 1.5;
+}
+
+.mock-section {
+  margin: 2.4rem 0 0;
+}
+
+.mock-section > h2 {
+  font-family: var(--data);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 1rem;
+}
+
+.mock-section > h2::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+
+/* EN/DE nebeneinander. */
+.mock-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 720px) {
+  .mock-pair {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mock-lang {
+  position: relative;
+}
+
+.mock-lang > .mock-flag {
+  position: absolute;
+  top: -0.6rem;
+  left: 0.6rem;
+  z-index: 5;
+  font-family: var(--data);
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--black);
+  background: var(--mint);
+  padding: 0.12rem 0.45rem;
+  border-radius: 2px;
+}
+
+.mock-lang[data-lang="de"] > .mock-flag {
+  background: var(--amber);
+}
+
+/* Bühne für ein einzelnes Bauteil — dunkler Rahmen wie im echten Layout. */
+.mock-stage {
+  position: relative;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 1.4rem;
+  min-height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Toast-Bühne: Toasts sind fixed positioniert — im Mockup statisch zeigen. */
+.mock-stage .toasts {
+  position: static;
+  max-width: 100%;
+  width: 100%;
+}
+
+.mock-stage .toast {
+  animation: none; /* im Mockup nicht ein-/ausblenden */
+}
+
+/* Loader/Gate-Bühne braucht Höhe. */
+.mock-stage.tall {
+  min-height: 220px;
+  display: block;
+  padding: 0;
+}
+
+.mock-stage.tall .loading {
+  min-height: 220px;
+}
+
+.mock-note {
+  font-size: 0.78rem;
+  color: var(--ink-4);
+  font-family: var(--data);
+  letter-spacing: 0.04em;
+  margin: 0.2rem 0 1.4rem;
+  line-height: 1.5;
+}
+
+/* Galerie-Kacheln auf index.html. */
+.mock-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.mock-card {
+  display: block;
+  text-decoration: none;
+  background: var(--card);
+  border: 1px solid var(--rule-strong);
+  border-radius: 4px;
+  padding: 1.2rem;
+  transition:
+    border-color 0.15s,
+    transform 0.15s,
+    box-shadow 0.15s;
+}
+
+.mock-card:hover {
+  border-color: var(--blue);
+  transform: translate(-2px, -2px);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--blue) 30%, transparent);
+}
+
+.mock-card h3 {
+  margin: 0.5rem 0 0.3rem;
+  font-size: 1.1rem;
+  color: var(--ink);
+}
+
+.mock-card p {
+  margin: 0;
+  color: var(--ink-3);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.mock-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--data);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--blue);
+  text-decoration: none;
+  margin-bottom: 1.4rem;
+}
+
+.mock-back:hover {
+  text-decoration: underline;
+}
